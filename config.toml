@@ -4,11 +4,18 @@
     min = "0.110.0"
     max = ""
   [[module.mounts]]
-    source = 'layouts'
-    target = 'layouts'
-  [[module.mounts]]
     source = 'assets'
     target = 'assets'
   [[module.mounts]]
     source = 'static'
     target = 'static'
+  [[module.mounts]]
+    source = "dist/scss"
+    target = "assets/scss/modules/fontawesome"
+    excludeFiles = "fontawesome.scss"
+  [[module.mounts]]
+    source = "dist/scss/fontawesome.scss"
+    target = "assets/scss/modules/fontawesome/fontawesome-free.scss"
+  [[module.mounts]]
+    source = "dist/webfonts"
+    target = "static/fonts"

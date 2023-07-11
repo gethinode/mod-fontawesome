@@ -1,0 +1,17 @@
+{{- $source := "scss/modules/fontawesome/fontawesome.scss" -}}
+{{- $target := "css/main.css" -}}
+
+{{- $files := slice -}}
+{{- range $index, $file := resources.Match "**.scss" -}}
+    {{- warnf "Processing file: %s" $file }}
+    {{- $files = $files | append $file -}}
+{{- end -}}
+
+
+{{ warnf "%s - %s" $source (resources.GetMatch $source) }}
+
+{{- $options := (dict "transpiler" "libsass" "targetPath" $target) -}}
+{{- $options = merge $options (dict "outputStyle" "expanded") -}}
+{{- $css := resources.GetMatch $source | resources.ExecuteAsTemplate "style.app.scss" . | toCSS $options -}}
+
+<link rel="stylesheet" href="{{ $css.Permalink }}">
