@@ -12,13 +12,16 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
+    "prestart": "npm run clean",
+    "start": "hugo server -s exampleSite --bind=0.0.0.0 --disableFastRender --printI18nWarnings",
     "prebuild": "npm run clean",
     "build": "hugo --gc --minify -s exampleSite",
     "clean": "rimraf exampleSite/public exampleSite/resources",
     "mod:tidy": "hugo mod tidy -s exampleSite",
     "mod:update": "npm run -s mod:tidy && hugo mod get -u ./...",
     "postinstall": "cpy node_modules/@fortawesome/fontawesome-free/scss dist/scss --flat && cpy node_modules/@fortawesome/fontawesome-free/webfonts dist/webfonts --flat",
-    "test": "npm run -s build"
+    "test": "npm run -s build",
+    "version": "hugo version"
   },
   "repository": {
     "type": "git",
