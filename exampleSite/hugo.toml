@@ -1,11 +1,11 @@
 baseURL = 'http://example.org/'
 languageCode = 'en-us'
-title = 'Test site for mod-template'
+title = 'Test site for mod-fontawesome'
 
 [module]
-  replacements = 'github.com/gethinode/mod-template -> ../..'
+  replacements = 'github.com/gethinode/mod-fontawesome -> ../..'
   [[module.imports]]
-    path = "github.com/gethinode/mod-template"
+    path = "github.com/gethinode/mod-fontawesome"
   [[module.imports.mounts]]
     source = "dist"
     target = "static"
