@@ -40,3 +40,10 @@ Hinode is a clean blog theme for [Hugo][hugo], an open-source static site genera
 [fontawesome]: https://fontawesome.com
 [repository]: https://github.com/gethinode/hinode.git
 [repository_template]: https://github.com/gethinode/template.git
+
+
+## Notes
+
+The repository of [Font Awesome has changed its pattern for semantic versioning](https://github.com/FortAwesome/Font-Awesome/issues/17342). As a result, [hugo does not pick up the latest version correctly](https://discourse.gohugo.io/t/how-to-specify-the-version-of-third-parties-library/41861). A workaround is to create a fork for version 6.x only and to use this as a source instead.
+
+This repository ([mod-fontawesome](https://github.com/gethinode/mod-fontawesome)) has chosen a different approach, which is more in line with the other modules maintained by Hinode. It downloads the latest npm release of Font Awesome and redistributes several selected files and folders. The steps are fully automated as part of a CI/CD process.

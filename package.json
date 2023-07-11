@@ -16,8 +16,8 @@
     "build": "hugo --gc --minify -s exampleSite",
     "clean": "rimraf exampleSite/public exampleSite/resources",
     "mod:tidy": "hugo mod tidy -s exampleSite",
-    "mod:update": "npm run -s mod:tidy && hugo mod get -u -s exampleSite",
-    "postinstall": "echo TODO: add postinstall instructions",
+    "mod:update": "npm run -s mod:tidy && hugo mod get -u ./...",
+    "postinstall": "cpy node_modules/@fortawesome/fontawesome-free/scss dist/scss --flat && cpy node_modules/@fortawesome/fontawesome-free/webfonts dist/webfonts --flat",
     "test": "npm run -s build"
   },
   "repository": {
@@ -31,6 +31,7 @@
   },
   "homepage": "https://gethinode.com",
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^6.4.0",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "cpy-cli": "^5.0.0",
