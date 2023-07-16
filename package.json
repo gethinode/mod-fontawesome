@@ -19,7 +19,10 @@
     "clean": "rimraf exampleSite/public exampleSite/resources",
     "mod:tidy": "hugo mod tidy -s exampleSite",
     "mod:update": "npm run -s mod:tidy && hugo mod get -u ./...",
-    "postinstall": "cpy node_modules/@fortawesome/fontawesome-free/scss dist/scss --flat && cpy node_modules/@fortawesome/fontawesome-free/webfonts dist/webfonts --flat",
+    "postinstall": "npm run -s copy:fonts && npm run -s copy:scss && npm run -s copy:rename",
+    "copy:fonts": "cpy node_modules/@fortawesome/fontawesome-free/webfonts dist/webfonts --flat",
+    "copy:scss": "cpy node_modules/@fortawesome/fontawesome-free/scss \"!node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss\" dist/scss --flat",
+    "copy:rename": "cpy node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss dist/scss/ --flat --rename=fontawesome-free.scss",
     "test": "npm run -s build",
     "version": "hugo version"
   },

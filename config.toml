@@ -12,10 +12,6 @@
   [[module.mounts]]
     source = "dist/scss"
     target = "assets/scss/modules/fontawesome"
-    excludeFiles = "fontawesome.scss"
-  [[module.mounts]]
-    source = "dist/scss/fontawesome.scss"
-    target = "assets/scss/modules/fontawesome/fontawesome-free.scss"
   [[module.mounts]]
     source = "dist/webfonts"
     target = "static/fonts"
