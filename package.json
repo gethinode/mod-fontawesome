@@ -1,6 +1,6 @@
 {
   "name": "@gethinode/mod-fontawesome",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A Hugo module to add Font Awesome icons to your Hinode site (work in progress)",
   "keywords": [
     "hugo",
@@ -38,7 +38,7 @@
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "cpy-cli": "^5.0.0",
-    "hugo-bin": "^0.111.2",
+    "hugo-bin": "^0.111.3",
     "rimraf": "^5.0.0",
     "semantic-release": "^21.0.7"
   },
