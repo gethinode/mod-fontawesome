@@ -1,8 +1,0 @@
-// Font awesome variables overrides for Hinode
-$fa-font-path:                  "../fonts";
-
-// Import Font Awesome files
-@import "fontawesome-free"; // renamed in module import to preserve the current file
-@import "regular";
-@import "solid";
-@import "brands";
