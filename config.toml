@@ -7,6 +7,9 @@
     source = 'assets'
     target = 'assets'
   [[module.mounts]]
+    source = 'layouts'
+    target = 'layouts'
+  [[module.mounts]]
     source = 'static'
     target = 'static'
   [[module.mounts]]
