@@ -36,7 +36,7 @@ Hinode is a clean blog theme for [Hugo][hugo], an open-source static site genera
 
 ## Configuration
 
-This module supports the following parameters (see the section `params` in `config.toml`):
+This module supports the following parameters (see the section `params.modules` in `config.toml`):
 
 | Setting                 | Default | Description |
 |-------------------------|---------|-------------|
