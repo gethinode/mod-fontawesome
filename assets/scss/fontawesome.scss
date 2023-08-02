@@ -1,3 +1,9 @@
+{{ if site.Params.modules.fontawesome.inline }}
+
+@import "modules/fontawesome/svg-with-js"; 
+
+{{ else }}
+
 // Font awesome variables overrides for Hinode
 $fa-font-path:                  "../fonts";
 
@@ -6,3 +12,5 @@ $fa-font-path:                  "../fonts";
 @import "modules/fontawesome/regular";
 @import "modules/fontawesome/solid";
 @import "modules/fontawesome/brands";
+
+{{ end }}

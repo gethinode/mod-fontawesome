@@ -1,7 +1,7 @@
 ---
 title: Test site
 description: Site to test Font Awesome module.
-date: 2023-07-21
+date: 2023-08-02
 ---
 
 ## Recently added icons
@@ -12,12 +12,12 @@ date: 2023-07-21
 
 ## Beat animation
 
-<div class="fa-3x">
+<div class="fa-3x" style="color: red">
   {{< fas circle-plus fa-beat >}}
   {{< fas heart fa-beat >}}
-  <i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s;" ></i>
-  <i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 2s;"></i>
-  <i class="fa-solid fa-heart fa-beat" style="--fa-beat-scale: 2.0;"></i>
+  {{< icon class="fas heart fa-beat" style="--fa-animation-duration: 0.5s;" >}}
+  {{< icon class="fas heart fa-beat" style="--fa-animation-duration: 2s;" >}}
+  {{< icon class="fas heart fa-beat" style="--fa-beat-scale: 2.0;" >}}
 </div>
 
 ## Fade animation
@@ -26,15 +26,15 @@ date: 2023-07-21
   {{< fas triangle-exclamation fa-fade >}}
   {{< fas skull-crossbones fa-fade >}}
   {{< fas desktop fa-fade >}}
-  <i class="fa-solid fa-i-cursor fa-fade" style="--fa-animation-duration: 2s; --fa-fade-opacity: 0.6;" ></i>
+  {{< icon class="fas i-cursor fa-fade" style="--fa-animation-duration: 2s; --fa-fade-opacity: 0.6;" >}}
 </div>
 
 ## Custom animation
 
-<div class="fa-3x">
-  {{< fas cog fa-spin >}}
-  <i class="fa-solid fa-cog fa-spin" style="--fa-animation-direction: reverse;" ></i>
-  <i class="fa-solid fa-cog fa-spin" style="--fa-animation-duration: 15s;"></i>
-  <i class="fa-solid fa-compact-disc fa-spin" style="--fa-animation-duration: 30s; --fa-animation-iteration-count: 1;"></i>
-  <i class="fa-solid fa-tire fa-spin" style="--fa-animation-duration: 3s; --fa-animation-iteration-count: 5;--fa-animation-timing: ease-in-out;"></i>
+<div class="fa-3x" style="color: blue">
+  {{< fas gear fa-spin >}}
+  {{< icon class="fas gear fa-spin" style="--fa-animation-direction: reverse;" >}}
+  {{< icon class="fas gear fa-spin" style="--fa-animation-duration: 15s;" >}}
+  {{< icon class="fas compact-disc fa-spin" style="--fa-animation-duration: 30s; --fa-animation-iteration-count: 1;" >}}
+  {{< icon class="fas cookie fa-spin" style="--fa-animation-duration: 3s; --fa-animation-iteration-count: 5;--fa-animation-timing: ease-in-out;" >}}
 </div>

@@ -1,5 +1,14 @@
-{{- if not (.Get 0) -}}
+{{- $class := "" -}}
+{{- $style := "" -}}
+{{- if .IsNamedParams -}}
+    {{- $class = .Get "class" -}}
+    {{- $style = .Get "style" -}}
+{{- else -}}
+    {{- $class = delimit .Params " " -}}
+{{- end -}}
+
+{{- if not $class -}}
     {{- errorf "Expected icon name: %s" .Position -}}
 {{- else -}}
-{{- partial "assets/icon.html" (dict "icon" (printf "fab %s" (delimit .Params " "))) }}
+    {{- partial "assets/icon.html" (dict "icon" (printf "fab %s" $class) "style" $style) }}
 {{- end -}}
