@@ -18,3 +18,11 @@
   [[module.mounts]]
     source = "dist/webfonts"
     target = "static/fonts"
+  [[module.mounts]]
+    source = "dist/svgs"
+    target = "assets/svgs/modules/fontawesome"
+
+[params.modules.fontawesome]
+  inline = true
+  debug = true
+  skipMissing = false

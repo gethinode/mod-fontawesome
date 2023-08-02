@@ -1,16 +1,52 @@
+<!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+{{- $missing := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><path d=\"M384 80c8.8 0 16 7.2 16 16V416c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V96c0-8.8 7.2-16 16-16H384zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z\"/></svg>" -}}
 {{- $icon := .icon -}}
 {{- if not $icon -}}
     {{- errorf "partial [assets/icon.html] - Expected value for param 'icon'" -}}
 {{- end -}}
+{{- $style := "" -}}
+{{- if .style }}
+    {{- $style = printf " style=\"%s\"" .style }}
+{{- end -}}
 
 {{- $icon_class := split $icon " " -}}
-{{- $attr := delimit (after 1 $icon_class) " " -}}
-{{- if eq (index $icon_class 0) "fas" -}}
-    <i class="fa-solid fa-{{ $attr}}"></i>
-{{- else if eq (index $icon_class 0) "fab" -}}
-    <i class="fa-brands fa-{{ $attr }}"></i>
-{{- else if eq (index $icon_class 0) "fa" -}}
-    <i class="fa-regular fa-{{ $attr }}"></i>
+{{- $attr := delimit (after 2 $icon_class) " " -}}
+
+{{- $family := (index $icon_class 0) -}}
+{{- $supportedFamilies := slice "fas" "fa-solid" "fa" "fa-regular" "fab" "fa-brands" -}}
+{{- if not (in $supportedFamilies $family) -}}
+    {{- errorf "partial [assets/icon.html] - Unrecognized icon class: %s" $family -}}
+{{- end -}}
+{{- $family = replace $family "fa-solid" "fas" -}}
+{{- $family = replace $family "fa-regular" "fa" -}}
+{{- $family = replace $family "fa-brands" "fab" -}}
+
+{{- $name := index $icon_class 1 -}}
+{{- $name = strings.TrimPrefix "fa-" $name -}}
+{{- $output := printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr $style -}}
+
+{{- if and site.Params.modules.fontawesome.debug site.Params.modules.fontawesome.inline -}}
+    {{- printf "<!-- %s -->" $output | safeHTML -}}
+{{- end -}}
+
+{{- if site.Params.modules.fontawesome.inline -}}
+    {{- $path := printf "svgs/modules/fontawesome/%s-%s.svg" $family $name -}}
+    {{- $svg := resources.Get $path -}}
+    {{- if not $svg -}}
+        {{- $msg := printf "partial [assets/icon.html] - Cannot find icon: %s" (path.Join "assets" $path) -}}
+        {{- if site.Params.modules.fontawesome.skipMissing -}}
+            {{- warnf $msg -}}
+            {{- $svg = resources.FromString "svgs/modules/fontawesome/missing.svg" $missing -}}
+        {{ else -}}
+            {{- errorf $msg -}}
+        {{- end -}}
+    {{- end -}}
+    {{- if $svg -}}
+        {{- $regex := printf `%s((?:.|\n)*)%s` "<!--" "-->" -}}
+        {{- $inject := (replaceRE $regex "" $svg.Content) -}}
+        {{- $inject = (replaceRE "xmlns=\"(.*?)\"" "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden role=\"img\"%s" $inject) -}}
+        {{- printf $inject $family $name $attr $style | safeHTML -}}
+    {{- end -}}
 {{- else -}}
-    {{- errorf "partial [assets/icon.html] - Unrecognized icon class: %s" $icon_class -}}
+    {{- print $output | safeHTML -}}
 {{- end -}}
