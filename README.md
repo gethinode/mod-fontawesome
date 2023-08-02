@@ -34,16 +34,28 @@
 
 Hinode is a clean blog theme for [Hugo][hugo], an open-source static site generator. Hinode is available as a [template][repository_template], and a [main theme][repository]. This repository maintains a Hugo module to add [Font Awesome][fontawesome] icons to a Hinode site. Visit the Hinode documentation site for [installation instructions][hinode_docs].
 
-<!-- MARKDOWN LINKS -->
-[hugo]: https://gohugo.io
-[hinode_docs]: https://gethinode.com
-[fontawesome]: https://fontawesome.com
-[repository]: https://github.com/gethinode/hinode.git
-[repository_template]: https://github.com/gethinode/template.git
+## Configuration
 
+This module supports the following parameters (see the section `params.modules` in `config.toml`):
+
+| Setting                 | Default | Description |
+|-------------------------|---------|-------------|
+| fontawesome.inline      | true    | If set, uses inline vector images instead of web fonts. Both methods support Font Awesome styling and animation. However, when using vector images you cannot use aliases. Instead, use the default name of the icon. |
+| fontawesome.debug       | true    | If set, prints the original code `<i class="[...]" style=[...]></i>` as comments next to the inline vector image. |
+| fontawesome.skipMissing | false   | If set, displays a warning when an icon cannot be found. The missing icon is replaced with a dummy. By default, Hinode exits with an error when an icon is missing. |
 
 ## Notes
 
-The repository of [Font Awesome has changed its pattern for semantic versioning](https://github.com/FortAwesome/Font-Awesome/issues/17342). As a result, [hugo does not pick up the latest version correctly](https://discourse.gohugo.io/t/how-to-specify-the-version-of-third-parties-library/41861). A workaround is to create a fork for version 6.x only and to use this as a source instead.
+The repository of [Font Awesome has changed its pattern for semantic versioning][fa_isue_17342]. As a result, [hugo does not pick up the latest version correctly][hugo_discussion_41861]. A workaround is to create a fork for version 6.x only and to use this as a source instead.
 
-This repository ([mod-fontawesome](https://github.com/gethinode/mod-fontawesome)) has chosen a different approach, which is more in line with the other modules maintained by Hinode. It downloads the latest npm release of Font Awesome and redistributes several selected files and folders. The steps are fully automated as part of a CI/CD process.
+This repository ([mod-fontawesome][mod-fontawesome]) has chosen a different approach, which is more in line with the other modules maintained by Hinode. It downloads the latest npm release of Font Awesome and redistributes several selected files and folders. The steps are fully automated as part of a CI/CD process.
+
+<!-- MARKDOWN LINKS -->
+[hugo]: https://gohugo.io
+[hinode_docs]: https://gethinode.com
+[fa_isue_17342]: https://github.com/FortAwesome/Font-Awesome/issues/17342
+[fontawesome]: https://fontawesome.com
+[hugo_discussion_41861]: https://discourse.gohugo.io/t/how-to-specify-the-version-of-third-parties-library/41861
+[mod-fontawesome]: https://github.com/gethinode/mod-fontawesome
+[repository]: https://github.com/gethinode/hinode.git
+[repository_template]: https://github.com/gethinode/template.git
