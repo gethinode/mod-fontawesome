@@ -44,7 +44,7 @@
     {{- if $svg -}}
         {{- $regex := printf `%s((?:.|\n)*)%s` "<!--" "-->" -}}
         {{- $inject := (replaceRE $regex "" $svg.Content) -}}
-        {{- $inject = (replaceRE "xmlns=\"(.*?)\"" "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden role=\"img\"%s" $inject) -}}
+        {{- $inject = (replaceRE "xmlns=\"(.*?)\"" "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $inject) -}}
         {{- printf $inject $family $name $attr $style | safeHTML -}}
     {{- end -}}
 {{- else -}}
