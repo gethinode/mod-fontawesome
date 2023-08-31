@@ -11,9 +11,9 @@
     {{- $icon = printf "%s fa-fluid" $icon -}}
 {{- end -}}
 
-{{- $style := .style -}}
-{{- if $style }}
-    {{- $style = printf " style=\"%s\"" $style }}
+{{- $style := "" -}}
+{{- if .style }}
+    {{- $style = printf " style=\"%s\"" .style }}
 {{- end -}}
 
 {{- $icon_class := split $icon " " -}}
