@@ -4,9 +4,16 @@
 {{- if not $icon -}}
     {{- errorf "partial [assets/icon.html] - Expected value for param 'icon'" -}}
 {{- end -}}
-{{- $style := "" -}}
-{{- if .style }}
-    {{- $style = printf " style=\"%s\"" .style }}
+
+{{- $wrapper := .wrapper -}}
+{{- if $wrapper -}}
+    {{- $wrapper = printf "%s fa-wrapper" $wrapper -}}
+    {{- $icon = printf "%s fa-fluid" $icon -}}
+{{- end -}}
+
+{{- $style := .style -}}
+{{- if $style }}
+    {{- $style = printf " style=\"%s\"" $style }}
 {{- end -}}
 
 {{- $icon_class := split $icon " " -}}
@@ -29,6 +36,7 @@
     {{- printf "<!-- %s -->" $output | safeHTML -}}
 {{- end -}}
 
+{{ with $wrapper }}<div class="{{ . }}">{{ end }}
 {{- if site.Params.modules.fontawesome.inline -}}
     {{- $path := printf "svgs/modules/fontawesome/%s-%s.svg" $family $name -}}
     {{- $svg := resources.Get $path -}}
@@ -50,3 +58,4 @@
 {{- else -}}
     {{- print $output | safeHTML -}}
 {{- end -}}
+{{ with $wrapper }}</div>{{ end }}
