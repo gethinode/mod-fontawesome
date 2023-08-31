@@ -16,3 +16,4 @@
 {{- $css := resources.GetMatch $source | resources.ExecuteAsTemplate "style.app.scss" . | toCSS $options -}}
 
 <link rel="stylesheet" href="{{ $css.Permalink }}">
+<link rel="stylesheet" href="/style.css">

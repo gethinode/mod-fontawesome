@@ -38,3 +38,7 @@ date: 2023-08-02
   {{< icon class="fas compact-disc fa-spin" style="--fa-animation-duration: 30s; --fa-animation-iteration-count: 1;" >}}
   {{< icon class="fas cookie fa-spin" style="--fa-animation-duration: 3s; --fa-animation-iteration-count: 5;--fa-animation-timing: ease-in-out;" >}}
 </div>
+
+## Fluid icon
+
+{{< fas class="triangle-exclamation" wrapper="w-25" >}}

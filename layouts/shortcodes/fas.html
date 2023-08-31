@@ -1,8 +1,10 @@
 {{- $class := "" -}}
 {{- $style := "" -}}
+{{- $wrapper := "" -}}
 {{- if .IsNamedParams -}}
     {{- $class = .Get "class" -}}
     {{- $style = .Get "style" -}}
+    {{- $wrapper = .Get "wrapper" -}}
 {{- else -}}
     {{- $class = delimit .Params " " -}}
 {{- end -}}
@@ -10,5 +12,5 @@
 {{- if not $class -}}
     {{- errorf "Expected icon name: %s" .Position -}}
 {{- else -}}
-    {{- partial "assets/icon.html" (dict "icon" (printf "fas %s" $class) "style" $style) }}
+    {{- partial "assets/icon.html" (dict "icon" (printf "fas %s" $class) "style" $style "wrapper" $wrapper) }}
 {{- end -}}
