@@ -42,3 +42,7 @@ date: 2023-08-02
 ## Fluid icon
 
 {{< fas class="triangle-exclamation" wrapper="w-25" >}}
+
+## Custom icon
+
+{{< icon custom activity fa-4x >}}

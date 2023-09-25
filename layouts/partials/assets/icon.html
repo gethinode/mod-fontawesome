@@ -21,9 +21,7 @@
 
 {{- $family := (index $icon_class 0) -}}
 {{- $supportedFamilies := slice "fas" "fa-solid" "fa" "fa-regular" "fab" "fa-brands" -}}
-{{- if not (in $supportedFamilies $family) -}}
-    {{- errorf "partial [assets/icon.html] - Unrecognized icon class: %s" $family -}}
-{{- end -}}
+{{- $custom := not (in $supportedFamilies $family) -}}
 {{- $family = replace $family "fa-solid" "fas" -}}
 {{- $family = replace $family "fa-regular" "fa" -}}
 {{- $family = replace $family "fa-brands" "fab" -}}
@@ -38,7 +36,12 @@
 
 {{ with $wrapper }}<div class="{{ . }}">{{ end }}
 {{- if site.Params.modules.fontawesome.inline -}}
-    {{- $path := printf "svgs/modules/fontawesome/%s-%s.svg" $family $name -}}
+    {{- $path := "" -}}
+    {{- if $custom -}}
+        {{- $path = printf "svgs/%s/%s.svg" $family $name -}}
+    {{- else -}}
+        {{- $path = printf "svgs/modules/fontawesome/%s-%s.svg" $family $name -}}
+    {{- end -}}
     {{- $svg := resources.Get $path -}}
     {{- if not $svg -}}
         {{- $msg := printf "partial [assets/icon.html] - Cannot find icon: %s" (path.Join "assets" $path) -}}
@@ -52,7 +55,13 @@
     {{- if $svg -}}
         {{- $regex := printf `%s((?:.|\n)*)%s` "<!--" "-->" -}}
         {{- $inject := (replaceRE $regex "" $svg.Content) -}}
+        
         {{- $inject = (replaceRE "xmlns=\"(.*?)\"" "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $inject) -}}
+        {{- if $custom -}}
+            {{- $inject = replaceRE "width=\"(.*?)\"" "" $inject -}}
+            {{- $inject = replaceRE "height=\"(.*?)\"" "" $inject -}}
+        {{- end -}}
+        
         {{- printf $inject $family $name $attr $style | safeHTML -}}
     {{- end -}}
 {{- else -}}
