@@ -26,7 +26,7 @@ date: 2023-08-02
   {{< fas triangle-exclamation fa-fade >}}
   {{< fas skull-crossbones fa-fade >}}
   {{< fas desktop fa-fade >}}
-  {{< icon class="fas i-cursor fa-fade" style="--fa-animation-duration: 2s; --fa-fade-opacity: 0.6;" >}}
+  {{< icon class="fas i-cursor fa-fade" style="--fa-animation-duration: 2s; --fa-fade-opacity: 0.6;" spacing=false >}}
 </div>
 
 ## Custom animation

@@ -13,7 +13,7 @@
   },
   "scripts": {
     "prestart": "npm run clean",
-    "start": "hugo server -s exampleSite --bind=0.0.0.0 --disableFastRender --printI18nWarnings",
+    "start": "hugo server -s exampleSite --bind=0.0.0.0 --disableFastRender --printI18nWarnings --minify",
     "prebuild": "npm run clean",
     "build": "hugo --gc --minify -s exampleSite",
     "clean": "rimraf exampleSite/public exampleSite/resources",

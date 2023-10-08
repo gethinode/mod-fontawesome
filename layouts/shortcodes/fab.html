@@ -1,10 +1,12 @@
 {{- $class := "" -}}
 {{- $style := "" -}}
 {{- $wrapper := "" -}}
+{{- $spacing := true -}}
 {{- if .IsNamedParams -}}
     {{- $class = .Get "class" -}}
     {{- $style = .Get "style" -}}
     {{- $wrapper = .Get "wrapper" -}}
+    {{- $spacing = .Get "spacing" | default true -}}
 {{- else -}}
     {{- $class = delimit .Params " " -}}
 {{- end -}}
@@ -12,5 +14,5 @@
 {{- if not $class -}}
     {{- errorf "Expected icon name: %s" .Position -}}
 {{- else -}}
-    {{- partial "assets/icon.html" (dict "icon" (printf "fab %s" $class) "style" $style "wrapper" $wrapper) }}
+    {{- partial "assets/icon.html" (dict "icon" (printf "fab %s" $class) "style" $style "wrapper" $wrapper "spacing" $spacing) }}
 {{- end -}}
