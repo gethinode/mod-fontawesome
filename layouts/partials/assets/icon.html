@@ -16,6 +16,8 @@
     {{- $style = printf " style=\"%s\"" .style }}
 {{- end -}}
 
+{{- $spacing := .spacing | default true -}}
+
 {{- $icon_class := split $icon " " -}}
 {{- $attr := delimit (after 2 $icon_class) " " -}}
 
@@ -67,4 +69,4 @@
 {{- else -}}
     {{- print $output | safeHTML -}}
 {{- end -}}
-{{ with $wrapper }}</div>{{ end }}
+{{ with $wrapper }}</div>{{ end }}{{ if $spacing }}&nbsp;{{- end }}
