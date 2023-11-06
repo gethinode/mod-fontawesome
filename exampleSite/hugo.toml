@@ -5,6 +5,9 @@ title = 'Test site for mod-fontawesome'
 [markup.goldmark.renderer]
 unsafe = true
 
+[markup.goldmark.parser.attribute]
+block = true
+
 [module]
   replacements = 'github.com/gethinode/mod-fontawesome -> ../..'
   [[module.imports]]

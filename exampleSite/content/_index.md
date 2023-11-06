@@ -46,3 +46,10 @@ date: 2023-08-02
 ## Custom icon
 
 {{< icon custom activity fa-4x >}}
+
+## List
+
+- {{< fas class="location-dot" wrapper="fa-li" >}} This is the first list item
+- {{< fas class="utensils" wrapper="fa-li" >}} This is the second list item
+- {{< fas class="truck" wrapper="fa-li" >}} This is the third and final list item
+{.fa-ul}

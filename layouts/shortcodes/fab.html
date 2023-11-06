@@ -6,7 +6,7 @@
     {{- $class = .Get "class" -}}
     {{- $style = .Get "style" -}}
     {{- $wrapper = .Get "wrapper" -}}
-    {{- $spacing = .Get "spacing" | default true -}}
+    {{- $spacing = .Get "spacing" | default (not (in (split $wrapper " ") "fa-li")) -}}
 {{- else -}}
     {{- $class = delimit .Params " " -}}
 {{- end -}}
