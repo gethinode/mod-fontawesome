@@ -207,6 +207,8 @@
 - fab bluetooth-b
 - fab bootstrap
 - fab bots
+- fab brave
+- fab brave-reverse
 - fab btc
 - fab buffer
 - fab buromobelexperte
@@ -344,6 +346,7 @@
 - fab google-play
 - fab google-plus
 - fab google-plus-g
+- fab google-scholar
 - fab google-wallet
 - fab gratipay
 - fab grav
@@ -392,6 +395,7 @@
 - fab lastfm
 - fab leanpub
 - fab less
+- fab letterboxd
 - fab line
 - fab linkedin
 - fab linkedin-in
@@ -414,6 +418,7 @@
 - fab meta
 - fab microblog
 - fab microsoft
+- fab mintbit
 - fab mix
 - fab mixcloud
 - fab mixer
@@ -436,6 +441,7 @@
 - fab old-republic
 - fab opencart
 - fab openid
+- fab opensuse
 - fab opera
 - fab optin-monster
 - fab orcid
@@ -459,6 +465,7 @@
 - fab pinterest
 - fab pinterest-p
 - fab pix
+- fab pixiv
 - fab playstation
 - fab product-hunt
 - fab pushed
@@ -496,8 +503,10 @@
 - fab sellsy
 - fab servicestack
 - fab shirtsinbulk
+- fab shoelace
 - fab shopify
 - fab shopware
+- fab signal-messenger
 - fab simplybuilt
 - fab sistrix
 - fab sith
@@ -527,6 +536,7 @@
 - fab square-instagram
 - fab square-js
 - fab square-lastfm
+- fab square-letterboxd
 - fab square-odnoklassniki
 - fab square-pied-piper
 - fab square-pinterest
@@ -587,6 +597,7 @@
 - fab unsplash
 - fab untappd
 - fab ups
+- fab upwork
 - fab usb
 - fab usps
 - fab ussunnah
@@ -602,6 +613,7 @@
 - fab vuejs
 - fab watchman-monitoring
 - fab waze
+- fab webflow
 - fab weebly
 - fab weibo
 - fab weixin
