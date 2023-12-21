@@ -21,7 +21,7 @@
 
 {{ if $src }}
     {{- if site.Params.modules.fontawesome.debug -}}
-        {{- printf "<!-- <svg src=\"%s\" class=\"%s\"> -->" $src $style | safeHTML -}}
+        {{- printf "<!-- <svg src=\"%s\" class=\"%s\"> -->" $src (or $style "") | safeHTML -}}
     {{- end -}}
     <div {{ with $wrapper }}class="{{ . }}"{{ end }}>
         <object class="dynamic-svg" type="image/svg+xml" data="{{ $src }}" data-class="{{ $icon }}" data-style="{{ $style | safeCSS }}"></object>
