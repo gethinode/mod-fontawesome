@@ -20,7 +20,6 @@
 {{ with $wrapper }}<div class="{{ . }}">{{ end }}
 
 {{ if $src }}
-    {{- warnf "<!-- <svg src=\"%s\" class=\"%s\" style=\"%s\"> -->" $src $icon $style | safeHTML -}}
     {{- if site.Params.modules.fontawesome.debug -}}
         {{- printf "<!-- <svg src=\"%s\" class=\"%s\"> -->" $src $style | safeHTML -}}
     {{- end -}}
