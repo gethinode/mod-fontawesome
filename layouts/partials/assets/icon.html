@@ -20,14 +20,17 @@
 {{ with $wrapper }}<div class="{{ . }}">{{ end }}
 
 {{ if $src }}
-    {{- warnf "<!-- <svg src=\"%s\" class=\"%s\" style=\"%s\"> -->" $src $icon $style | safeHTML -}}
     {{- if site.Params.modules.fontawesome.debug -}}
-        {{- printf "<!-- <svg src=\"%s\" class=\"%s\"> -->" $src $style | safeHTML -}}
+        {{- printf "<!-- <svg src=\"%s\" class=\"%s\"> -->" $src (or $style "") | safeHTML -}}
     {{- end -}}
     <div {{ with $wrapper }}class="{{ . }}"{{ end }}>
         <object class="dynamic-svg" type="image/svg+xml" data="{{ $src }}" data-class="{{ $icon }}" data-style="{{ $style | safeCSS }}"></object>
     </div>
 {{ else }}
+    {{- if $style }}
+        {{- $style = printf " style=\"%s\"" $style }}
+    {{- end -}}
+
     {{- $icon_class := split $icon " " -}}
     {{- $attr := delimit (after 2 $icon_class) " " -}}
 
@@ -40,7 +43,7 @@
 
     {{- $name := index $icon_class 1 -}}
     {{- $name = strings.TrimPrefix "fa-" $name -}}
-    {{- $output := printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr $style -}}
+    {{- $output := printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
 
     {{- if and site.Params.modules.fontawesome.debug site.Params.modules.fontawesome.inline -}}
         {{- printf "<!-- %s -->" $output | safeHTML -}}
@@ -73,9 +76,6 @@
                 {{- $inject = replaceRE "height=\"(.*?)\"" "" $inject -}}
             {{- end -}}
             
-            {{- if $style }}
-                {{- $style = printf " style=\"%s\"" $style }}
-            {{- end -}}
             {{- printf $inject $family $name $attr $style | safeHTML -}}
         {{- end -}}
     {{- else -}}
