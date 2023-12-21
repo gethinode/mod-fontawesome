@@ -53,3 +53,13 @@ date: 2023-08-02
 - {{< fas class="utensils" wrapper="fa-li" >}} This is the second list item
 - {{< fas class="truck" wrapper="fa-li" >}} This is the third and final list item
 {.fa-ul}
+
+## Icon with path
+
+<div style="color: blue">
+{{< icon src="fa-house.svg" class="fa-2x fa-beat" style="--fa-animation-duration: 2s;" >}}
+</div>
+
+## Fluid icon with path
+
+{{< icon src="fa-house.svg" wrapper="w-25" >}}
