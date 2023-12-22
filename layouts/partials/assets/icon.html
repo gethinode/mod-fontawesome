@@ -76,7 +76,7 @@
                 {{- $inject = replaceRE "height=\"(.*?)\"" "" $inject -}}
             {{- end -}}
             
-            {{- printf $inject $family $name $attr $style | safeHTML -}}
+            {{- printf $inject $family $name $attr (or $style "") | safeHTML -}}
         {{- end -}}
     {{- else -}}
         {{- print $output | safeHTML -}}
