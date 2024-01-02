@@ -1,3 +1,26 @@
+<!-- 
+    Copyright © 2024 The Hinode Team / Mark Dumay. All rights reserved.
+    Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
+    Visit gethinode.com/license for more details.
+-->
+
+{{ $error := false }}
+
+<!-- Merge positional arguments when applicable -->
+{{ $args := dict }}
+{{ if .IsNamedParams }}
+    {{ $args = .Params }}
+{{ else }}
+    {{- $args = dict "class" (delimit .Params " ") -}}
+{{ end }}
+
+<!-- Validate arguments -->
+{{ if partial "utilities/IsInvalidArgs.html" (dict "structure" "icon" "args" $args) }}
+    {{ errorf "Invalid arguments: %s" .Position -}}
+    {{ $error = true }}
+{{ end }}
+
+<!-- Initialize arguments -->
 {{- $class := "" -}}
 {{- $style := "" -}}
 {{- $wrapper := "" -}}
@@ -13,6 +36,10 @@
 
 {{- if not $class -}}
     {{- errorf "Expected icon name: %s" .Position -}}
-{{- else -}}
+    {{ $error = true }}
+{{- end -}}
+
+<!-- Main code -->
+{{- if not $error -}}
     {{- partial "assets/icon.html" (dict "icon" (printf "fas %s" $class) "style" $style "wrapper" $wrapper "spacing" $spacing) }}
 {{- end -}}

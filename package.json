@@ -18,7 +18,7 @@
     "build": "hugo --gc --minify -s exampleSite",
     "clean": "rimraf exampleSite/public exampleSite/resources",
     "mod:tidy": "hugo mod tidy -s exampleSite",
-    "mod:update": "npm run -s mod:tidy && hugo mod get -u ./...",
+    "mod:update": "npm run -s mod:tidy && hugo mod get -u",
     "postinstall": "npm-run-all copy:** && npm run -s meta",
     "copy:fonts": "cpy node_modules/@fortawesome/fontawesome-free/webfonts dist/webfonts --flat",
     "copy:scss1": "cpy node_modules/@fortawesome/fontawesome-free/scss dist/scss --flat",

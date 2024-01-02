@@ -24,6 +24,8 @@
   [[module.mounts]]
     source = "dist/svgs"
     target = "assets/svgs/modules/fontawesome"
+  [[module.imports]]
+    path = "github.com/gethinode/mod-utils"
 
 [params.modules.fontawesome]
   inline = true
