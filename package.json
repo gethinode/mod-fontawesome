@@ -1,6 +1,6 @@
 {
   "name": "@gethinode/mod-fontawesome",
-  "version": "1.7.3",
+  "version": "1.8.0",
   "description": "A Hugo module to add Font Awesome icons to your Hinode site",
   "keywords": [
     "hugo",
@@ -18,8 +18,8 @@
     "build": "hugo --gc --minify -s exampleSite",
     "clean": "rimraf exampleSite/public exampleSite/resources",
     "mod:tidy": "hugo mod tidy -s exampleSite",
-    "mod:update":  "rimraf _vendor && hugo mod get -u && npm run -s mod:vendor && npm run -s mod:tidy",
-    "mod:vendor":  "rimraf _vendor && hugo mod vendor",
+    "mod:update": "rimraf _vendor && hugo mod get -u && npm run -s mod:vendor && npm run -s mod:tidy",
+    "mod:vendor": "rimraf _vendor && hugo mod vendor",
     "postinstall": "npm-run-all copy:** && npm run -s meta",
     "copy:fonts": "cpy node_modules/@fortawesome/fontawesome-free/webfonts dist/webfonts --flat",
     "copy:scss1": "cpy node_modules/@fortawesome/fontawesome-free/scss dist/scss --flat",
