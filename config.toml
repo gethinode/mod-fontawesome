@@ -28,6 +28,7 @@
     path = "github.com/gethinode/mod-utils/v2"
 
 [params.modules.fontawesome]
+  integration = "core"
   inline = true
   debug = true
   skipMissing = false
