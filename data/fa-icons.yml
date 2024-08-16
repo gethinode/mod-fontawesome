@@ -203,6 +203,7 @@
 - fab blackberry
 - fab blogger
 - fab blogger-b
+- fab bluesky
 - fab bluetooth
 - fab bluetooth-b
 - fab bootstrap
@@ -385,6 +386,7 @@
 - fab joomla
 - fab js
 - fab jsfiddle
+- fab jxl
 - fab kaggle
 - fab keybase
 - fab keycdn
@@ -546,8 +548,11 @@
 - fab square-threads
 - fab square-tumblr
 - fab square-twitter
+- fab square-upwork
 - fab square-viadeo
 - fab square-vimeo
+- fab square-web-awesome
+- fab square-web-awesome-stroke
 - fab square-whatsapp
 - fab square-x-twitter
 - fab square-xing
@@ -613,6 +618,7 @@
 - fab vuejs
 - fab watchman-monitoring
 - fab waze
+- fab web-awesome
 - fab webflow
 - fab weebly
 - fab weibo
@@ -1831,7 +1837,9 @@
 - fas t
 - fas table
 - fas table-cells
+- fas table-cells-column-lock
 - fas table-cells-large
+- fas table-cells-row-lock
 - fas table-columns
 - fas table-list
 - fas table-tennis-paddle-ball
