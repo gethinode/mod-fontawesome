@@ -4,21 +4,21 @@
     Visit gethinode.com/license for more details.
 -->
 
-{{ $error := false }}
+{{- $error := false -}}
 
 <!-- Merge positional arguments when applicable -->
-{{ $args := dict }}
-{{ if .IsNamedParams }}
-    {{ $args = .Params }}
-{{ else }}
+{{- $args := dict -}}
+{{- if .IsNamedParams -}}
+    {{- $args = .Params -}}
+{{- else -}}
     {{- $args = dict "class" (delimit .Params " ") -}}
 {{ end }}
 
 <!-- Validate arguments -->
-{{ if partial "utilities/IsInvalidArgs.html" (dict "structure" "icon" "args" $args) }}
-    {{ errorf "Invalid arguments: %s" .Position -}}
-    {{ $error = true }}
-{{ end }}
+{{- if partial "utilities/IsInvalidArgs.html" (dict "structure" "icon" "args" $args) -}}
+    {{- errorf "Invalid arguments: %s" .Position -}}
+    {{- $error = true -}}
+{{- end -}}
 
 <!-- Initialize arguments -->
 {{- $class := "" -}}

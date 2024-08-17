@@ -203,6 +203,7 @@
 - fab blackberry
 - fab blogger
 - fab blogger-b
+- fab bluesky
 - fab bluetooth
 - fab bluetooth-b
 - fab bootstrap
@@ -262,6 +263,7 @@
 - fab d-and-d
 - fab d-and-d-beyond
 - fab dailymotion
+- fab dart-lang
 - fab dashcube
 - fab debian
 - fab deezer
@@ -311,6 +313,7 @@
 - fab firstdraft
 - fab flickr
 - fab flipboard
+- fab flutter
 - fab fly
 - fab font-awesome
 - fab fonticons
@@ -385,6 +388,7 @@
 - fab joomla
 - fab js
 - fab jsfiddle
+- fab jxl
 - fab kaggle
 - fab keybase
 - fab keycdn
@@ -546,8 +550,11 @@
 - fab square-threads
 - fab square-tumblr
 - fab square-twitter
+- fab square-upwork
 - fab square-viadeo
 - fab square-vimeo
+- fab square-web-awesome
+- fab square-web-awesome-stroke
 - fab square-whatsapp
 - fab square-x-twitter
 - fab square-xing
@@ -613,6 +620,7 @@
 - fab vuejs
 - fab watchman-monitoring
 - fab waze
+- fab web-awesome
 - fab webflow
 - fab weebly
 - fab weibo
@@ -1831,7 +1839,10 @@
 - fas t
 - fas table
 - fas table-cells
+- fas table-cells-column-lock
 - fas table-cells-large
+- fas table-cells-row-lock
+- fas table-cells-row-unlock
 - fas table-columns
 - fas table-list
 - fas table-tennis-paddle-ball
@@ -1872,6 +1883,7 @@
 - fas thumbs-down
 - fas thumbs-up
 - fas thumbtack
+- fas thumbtack-slash
 - fas ticket
 - fas ticket-simple
 - fas timeline
@@ -2009,6 +2021,7 @@
 - fas water
 - fas water-ladder
 - fas wave-square
+- fas web-awesome
 - fas weight-hanging
 - fas weight-scale
 - fas wheat-awn

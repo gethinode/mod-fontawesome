@@ -40,6 +40,7 @@ This module supports the following parameters (see the section `params.modules` 
 
 | Setting                 | Default | Description |
 |-------------------------|---------|-------------|
+| fontawesome.embed      | true    | If set, generates a symbol map with embedded vector images. Only works in conjunction with `inline`. Include the symbol with the partial `assets/symbols.html` (requires the current page context).|
 | fontawesome.inline      | true    | If set, uses inline vector images instead of web fonts. Both methods support Font Awesome styling and animation. However, when using vector images you cannot use aliases. Instead, use the default name of the icon. |
 | fontawesome.debug       | true    | If set, prints the original code `<i class="[...]" style=[...]></i>` as comments next to the inline vector image. |
 | fontawesome.skipMissing | false   | If set, displays a warning when an icon cannot be found. The missing icon is replaced with a dummy. By default, Hinode exits with an error when an icon is missing. |

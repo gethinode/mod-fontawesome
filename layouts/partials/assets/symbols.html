@@ -1,0 +1,9 @@
+{{- if site.Params.modules.fontawesome.embed -}}
+    {{- if and site.Params.modules.fontawesome.debug -}}
+        {{- printf "<!-- SVG symbol map -->" | safeHTML }}
+    {{ end -}}
+
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" display="none">
+        {{ delimit (.Scratch.Get "icons" | uniq) "\n" | safeHTML }}
+    </svg>
+{{ end }}
