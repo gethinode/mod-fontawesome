@@ -263,6 +263,7 @@
 - fab d-and-d
 - fab d-and-d-beyond
 - fab dailymotion
+- fab dart-lang
 - fab dashcube
 - fab debian
 - fab deezer
@@ -312,6 +313,7 @@
 - fab firstdraft
 - fab flickr
 - fab flipboard
+- fab flutter
 - fab fly
 - fab font-awesome
 - fab fonticons
@@ -1840,6 +1842,7 @@
 - fas table-cells-column-lock
 - fas table-cells-large
 - fas table-cells-row-lock
+- fas table-cells-row-unlock
 - fas table-columns
 - fas table-list
 - fas table-tennis-paddle-ball
@@ -1880,6 +1883,7 @@
 - fas thumbs-down
 - fas thumbs-up
 - fas thumbtack
+- fas thumbtack-slash
 - fas ticket
 - fas ticket-simple
 - fas timeline
@@ -2017,6 +2021,7 @@
 - fas water
 - fas water-ladder
 - fas wave-square
+- fas web-awesome
 - fas weight-hanging
 - fas weight-scale
 - fas wheat-awn
