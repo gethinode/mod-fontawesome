@@ -4,13 +4,13 @@
     Visit gethinode.com/license for more details.
 -->
 
-{{ $error := false }}
+{{- $error := false -}}
 
 <!-- Validate arguments -->
-{{ if partial "utilities/IsInvalidArgs.html" (dict "structure" "icon" "args" . "group" "partial") }}
+{{- if partial "utilities/IsInvalidArgs.html" (dict "structure" "icon" "args" . "group" "partial") -}}
     {{- errorf "partial [assets/icon.html] - Invalid arguments" -}}
-    {{ $error = true }}
-{{ end }}
+    {{- $error = true -}}
+{{- end -}}
 
 <!-- Initialize arguments -->
 <!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
@@ -29,21 +29,19 @@
 {{- end -}}
 
 {{- $style := .style -}}
-
 {{- $spacing := .spacing | default true -}}
+{{- $output := "" -}}
 
 <!-- Main code -->
-{{ if not $error }}
-    {{ with $wrapper }}<div class="{{ . }}">{{ end }}
-
-    {{ if $src }}
+{{- if not $error }}
+    {{- if $src -}}
         {{- if site.Params.modules.fontawesome.debug -}}
-            {{- printf "<!-- <svg src=\"%s\" class=\"%s\"> -->" $src (or $style "") | safeHTML -}}
-        {{- end -}}
+            {{- printf "<!-- <svg src=\"%s\" class=\"%s\"> -->" $src (or $style "") | safeHTML }}
+        {{ end -}}
         <div {{ with $wrapper }}class="{{ . }}"{{ end }}>
             <object width=70 height=70 class="dynamic-svg" type="image/svg+xml" data="{{ $src }}" data-class="{{ $icon }}" data-style="{{ $style | safeCSS }}"></object>
         </div>
-    {{ else }}
+    {{- else -}}
         {{- if $style }}
             {{- $style = printf " style=\"%s\"" $style }}
         {{- end -}}
@@ -60,11 +58,11 @@
 
         {{- $name := index $icon_class 1 -}}
         {{- $name = strings.TrimPrefix "fa-" $name -}}
-        {{- $output := printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
+        {{- $output = printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
 
         {{- if and site.Params.modules.fontawesome.debug site.Params.modules.fontawesome.inline -}}
-            {{- printf "<!-- %s -->" $output | safeHTML -}}
-        {{- end -}}
+            {{- printf "<!-- %s -->" $output | safeHTML }}
+        {{ end -}}
 
         {{- if site.Params.modules.fontawesome.inline -}}
             {{- $path := "" -}}
@@ -79,26 +77,38 @@
                 {{- if site.Params.modules.fontawesome.skipMissing -}}
                     {{- warnf $msg -}}
                     {{- $svg = resources.FromString "svgs/modules/fontawesome/missing.svg" $missing -}}
-                {{ else -}}
+                {{- else -}}
                     {{- errorf $msg -}}
                 {{- end -}}
             {{- end -}}
             {{- if $svg -}}
                 {{- $regex := printf `%s((?:.|\n)*)%s` "<!--" "-->" -}}
-                {{- $inject := (replaceRE $regex "" $svg.Content) -}}
+                {{- $content := (replaceRE $regex "" $svg.Content) -}}
                 
-                {{- $inject = (replaceRE "xmlns=\"(.*?)\"" "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $inject) -}}
+                {{- $inject := (replaceRE "xmlns=\"(.*?)\"" "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $content) -}}
                 {{- if $custom -}}
                     {{- $inject = replaceRE "width=\"(.*?)\"" "" $inject -}}
                     {{- $inject = replaceRE "height=\"(.*?)\"" "" $inject -}}
                 {{- end -}}
                 
-                {{- printf $inject $family $name $attr (or $style "") | safeHTML -}}
+                {{- $output = printf $inject $family $name $attr (or $style "") -}}
+                {{- if site.Params.modules.fontawesome.embed -}}
+                    {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
+                    {{- $output = printf `%s<use href="#%s-%s"></use></svg>` $definition $family $name -}}
+                    {{- $entry := replaceRE "^<svg " (printf `<symbol id="%s-%s"` $family $name) $content -}}
+                    {{- $entry = replaceRE "</svg>$" "</symbol>" $entry -}}
+                    {{- $entry = replaceRE "viewBox=\"(.*?)\"" "" $entry -}}
+                    {{- $entry = replaceRE "xmlns=\"(.*?)\"" "" $entry -}}
+                    {{- page.Scratch.Add "icons" (slice $entry) -}}
+                {{- end -}}
             {{- end -}}
-        {{- else -}}
-            {{- print $output | safeHTML -}}
         {{- end -}}
-    {{ end }}
+    {{- end -}}
 
-    {{ with $wrapper }}</div>{{ end }}{{ if $spacing }}&nbsp;{{- end }}
-{{ end }}
+    {{- with $wrapper -}}
+        <div class="{{ . }}">{{ $output | safeHTML }}</div>
+    {{- else -}}
+        {{- $output | safeHTML -}}
+    {{- end -}}
+    {{- if $spacing }}&nbsp;{{- end -}}
+{{- end -}}

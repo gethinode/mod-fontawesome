@@ -7,9 +7,18 @@
   {{ partial "head/stylesheet.html" -}}
 </head>
 <body>
-{{ block "main" . }}
+  Settings:
+  <ul>
+    <li>embed = {{ site.Params.modules.fontawesome.embed }}</li>
+    <li>inline = {{ site.Params.modules.fontawesome.inline }}</li>
+    <li>debug = {{ site.Params.modules.fontawesome.debug }}</li>
+    <li>skipMissing = {{ site.Params.modules.fontawesome.skipMissing }}</li>
+  </ul>
 
-{{ end }}
-{{- partial "footer/scripts.html" (dict "page" .) }}
+  {{ block "main" . }}
+
+  {{ end }}
+  {{- partial "assets/symbols.html" . -}}
+  {{- partial "footer/scripts.html" (dict "page" .) -}}
 </body>
 </html>

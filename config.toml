@@ -29,6 +29,7 @@
 
 [params.modules.fontawesome]
   integration = "core"
+  embed = true
   inline = true
   debug = true
   skipMissing = false
