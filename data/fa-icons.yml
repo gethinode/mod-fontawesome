@@ -257,6 +257,7 @@
 - fab creative-commons-share
 - fab creative-commons-zero
 - fab critical-role
+- fab css
 - fab css3
 - fab css3-alt
 - fab cuttlefish
@@ -306,6 +307,7 @@
 - fab fedex
 - fab fedora
 - fab figma
+- fab files-pinwheel
 - fab firefox
 - fab firefox-browser
 - fab first-order
@@ -528,6 +530,7 @@
 - fab speaker-deck
 - fab spotify
 - fab square-behance
+- fab square-bluesky
 - fab square-dribbble
 - fab square-facebook
 - fab square-font-awesome
@@ -911,6 +914,7 @@
 - fas chart-area
 - fas chart-bar
 - fas chart-column
+- fas chart-diagram
 - fas chart-gantt
 - fas chart-line
 - fas chart-pie
@@ -1005,6 +1009,7 @@
 - fas comment-dollar
 - fas comment-dots
 - fas comment-medical
+- fas comment-nodes
 - fas comment-slash
 - fas comment-sms
 - fas comments
@@ -1167,6 +1172,8 @@
 - fas file-csv
 - fas file-excel
 - fas file-export
+- fas file-fragment
+- fas file-half-dashed
 - fas file-image
 - fas file-import
 - fas file-invoice
@@ -1317,6 +1324,8 @@
 - fas helicopter-symbol
 - fas helmet-safety
 - fas helmet-un
+- fas hexagon-nodes
+- fas hexagon-nodes-bolt
 - fas highlighter
 - fas hill-avalanche
 - fas hill-rockslide
@@ -1782,6 +1791,7 @@
 - fas spray-can-sparkles
 - fas square
 - fas square-arrow-up-right
+- fas square-binary
 - fas square-caret-down
 - fas square-caret-left
 - fas square-caret-right
