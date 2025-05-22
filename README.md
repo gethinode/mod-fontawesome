@@ -51,6 +51,10 @@ The repository of [Font Awesome has changed its pattern for semantic versioning]
 
 This repository ([mod-fontawesome][mod-fontawesome]) has chosen a different approach, which is more in line with the other modules maintained by Hinode. It downloads the latest npm release of Font Awesome and redistributes several selected files and folders. The steps are fully automated as part of a CI/CD process.
 
+## Contributing
+
+This module uses [semantic-release][semantic-release] to automate the release of new versions. The package uses `husky` and `commitlint` to ensure commit messages adhere to the [Conventional Commits][conventionalcommits] specification. You can run `npx git-cz` from the terminal to help prepare the commit message.
+
 <!-- MARKDOWN LINKS -->
 [hugo]: https://gohugo.io
 [hinode_docs]: https://gethinode.com
@@ -60,3 +64,6 @@ This repository ([mod-fontawesome][mod-fontawesome]) has chosen a different appr
 [mod-fontawesome]: https://github.com/gethinode/mod-fontawesome
 [repository]: https://github.com/gethinode/hinode.git
 [repository_template]: https://github.com/gethinode/template.git
+[conventionalcommits]: https://www.conventionalcommits.org
+[husky]: https://typicode.github.io/husky/
+[semantic-release]: https://semantic-release.gitbook.io/
