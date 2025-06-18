@@ -15,9 +15,9 @@ date: 2023-08-02
 <div class="fa-3x" style="color: red">
   {{< fas circle-plus fa-beat >}}
   {{< fas heart fa-beat >}}
-  {{< icon class="fas heart fa-beat" style="--fa-animation-duration: 0.5s;" >}}
-  {{< icon class="fas heart fa-beat" style="--fa-animation-duration: 2s;" >}}
-  {{< icon class="fas heart fa-beat" style="--fa-beat-scale: 2.0;" >}}
+  {{< icon icon="fas heart fa-beat" inline-style="--fa-animation-duration: 0.5s;" >}}
+  {{< icon icon="fas heart fa-beat" inline-style="--fa-animation-duration: 2s;" >}}
+  {{< icon icon="fas heart fa-beat" inline-style="--fa-beat-scale: 2.0;" >}}
 </div>
 
 ## Fade animation
@@ -26,22 +26,22 @@ date: 2023-08-02
   {{< fas triangle-exclamation fa-fade >}}
   {{< fas skull-crossbones fa-fade >}}
   {{< fas desktop fa-fade >}}
-  {{< icon class="fas i-cursor fa-fade" style="--fa-animation-duration: 2s; --fa-fade-opacity: 0.6;" spacing=false >}}
+  {{< icon icon="fas i-cursor fa-fade" inline-style="--fa-animation-duration: 2s; --fa-fade-opacity: 0.6;" spacing=false >}}
 </div>
 
 ## Custom animation
 
 <div class="fa-3x" style="color: blue">
   {{< fas gear fa-spin >}}
-  {{< icon class="fas gear fa-spin" style="--fa-animation-direction: reverse;" >}}
-  {{< icon class="fas gear fa-spin" style="--fa-animation-duration: 15s;" >}}
-  {{< icon class="fas compact-disc fa-spin" style="--fa-animation-duration: 30s; --fa-animation-iteration-count: 1;" >}}
-  {{< icon class="fas cookie fa-spin" style="--fa-animation-duration: 3s; --fa-animation-iteration-count: 5;--fa-animation-timing: ease-in-out;" >}}
+  {{< icon icon="fas gear fa-spin" inline-style="--fa-animation-direction: reverse;" >}}
+  {{< icon icon="fas gear fa-spin" inline-style="--fa-animation-duration: 15s;" >}}
+  {{< icon icon="fas compact-disc fa-spin" inline-style="--fa-animation-duration: 30s; --fa-animation-iteration-count: 1;" >}}
+  {{< icon icon="fas cookie fa-spin" inline-style="--fa-animation-duration: 3s; --fa-animation-iteration-count: 5;--fa-animation-timing: ease-in-out;" >}}
 </div>
 
 ## Fluid icon
 
-{{< fas class="triangle-exclamation" wrapper="w-25" >}}
+{{< fas icon="triangle-exclamation" wrapper="w-25" >}}
 
 ## Custom icon
 
@@ -49,15 +49,15 @@ date: 2023-08-02
 
 ## List
 
-- {{< fas class="location-dot" wrapper="fa-li" >}} This is the first list item
-- {{< fas class="utensils" wrapper="fa-li" >}} This is the second list item
-- {{< fas class="truck" wrapper="fa-li" >}} This is the third and final list item
+- {{< fas icon="location-dot" wrapper="fa-li" >}} This is the first list item
+- {{< fas icon="utensils" wrapper="fa-li" >}} This is the second list item
+- {{< fas icon="truck" wrapper="fa-li" >}} This is the third and final list item
 {.fa-ul}
 
 ## Icon with path
 
 <div style="color: blue">
-{{< icon src="fa-house.svg" class="fa-2x fa-beat" style="--fa-animation-duration: 2s;" >}}
+{{< icon src="fa-house.svg" icon="fa-2x fa-beat" inline-style="--fa-animation-duration: 2s;" >}}
 </div>
 
 ## Fluid icon with path

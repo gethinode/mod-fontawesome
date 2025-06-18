@@ -37,9 +37,9 @@
 <!-- Main code -->
 {{- if not $error -}}
     {{- partial "assets/icon.html" (dict
-        "icon"    (printf "fab %s" $icon)
-        "style"   (or $args.iconStyle $args.style)
-        "wrapper" $args.wrapper
-        "spacing" $spacing
+        "icon"         (printf "fab %s" $icon)
+        "inline-style" (or $args.inlineStyle $args.style)
+        "wrapper"      $args.wrapper
+        "spacing"      $spacing
     ) -}}
 {{- end -}}
