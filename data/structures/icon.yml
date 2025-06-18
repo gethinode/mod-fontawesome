@@ -3,9 +3,19 @@ comment: >-
   can also use fa for regular icons, fab for brand icons, and fas for solid
   icons. 
 arguments:
+  icon:
+    position: 0
+  src: 
+    optional: true
+    release: v0.22.0
+  inline-style:
+  spacing:
+    release: v0.21.0
+  wrapper:
+    release: v0.19.0
+  # deprecated arguments
   class:
     type: string
-    position: 0
     optional: true
     comment: >-
       Family, name, and styling of the icon to display. The shortcode expects
@@ -17,19 +27,8 @@ arguments:
       you can omit the family name. Alternatively, you can reference a custom
       family and icon stored in `assets/svgs/{family}/{icon}.svg`. 
     group: shortcode
-  icon:
-    type: string
-    optional: true
-    comment: Alias for class.
-    group: partial
-  src: 
-    type: string
-    optional: true
-    comment: >-
-      Path to a scalable vector graphics (`.svg`) file to use instead of a Font
-      Awesome icon. The file is dynamically loaded and supports styling options
-      similar to a regular Font Awesome icon.
-    release: v0.22.0
+    deprecated: v1.0.0
+    alternative: icon
   style:
     type: string
     optional: true
@@ -37,17 +36,5 @@ arguments:
       Custom style of the icon, e.g. `--fa-animation-duration: 2s;`. Please note
       that Hinode disables inline styles by default, review the Content Security
       Policy for more details.
-  spacing:
-    type: bool
-    default: true
-    optional: true
-    comment: >-
-      Flag to add a trailing whitespace character to optimize inline rendering.
-    release: v0.21.0
-  wrapper:
-    type: string
-    optional: true
-    comment: >-
-      Class attributes of the wrapper element. The wrapper adds the `fa-wrapper`
-      and `fa-fluid` attributes by default.
-    release: v0.19.0
+    deprecated: v1.0.0
+    alternative: inline-style

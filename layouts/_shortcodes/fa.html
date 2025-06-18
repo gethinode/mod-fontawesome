@@ -1,45 +1,45 @@
-<!-- 
-    Copyright © 2024 The Hinode Team / Mark Dumay. All rights reserved.
+{{/* 
+    Copyright © 2024 - 2025 The Hinode Team / Mark Dumay. All rights reserved.
     Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
     Visit gethinode.com/license for more details.
--->
+*/}}
 
 {{- $error := false -}}
 
-<!-- Merge positional arguments when applicable -->
-{{- $args := dict -}}
-{{- if .IsNamedParams -}}
-    {{- $args = .Params -}}
-{{- else -}}
-    {{- $args = dict "class" (delimit .Params " ") -}}
-{{- end -}}
-
-<!-- Validate arguments -->
-{{- if partial "utilities/IsInvalidArgs.html" (dict "structure" "icon" "args" $args) -}}
-    {{- errorf "Invalid arguments: %s" .Position -}}
-    {{- $error = true -}}
-{{- end -}}
+{{/* Validate and initialize arguments */}}
+{{ $args := partial "utilities/InitArgs.html" (dict "structure" "icon" "args" .Params "named" .IsNamedParams "group" "shortcode") }}
+{{ if or $args.err $args.warnmsg }}
+    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
+        "partial"  "shortcodes/fa.html" 
+        "warnid"   "warn-invalid-arguments"
+        "msg"      "Invalid arguments"
+        "details"  ($args.errmsg | append $args.warnmsg)
+        "file"     page.File
+        "position" .Position
+    )}}
+{{ end }}
 
 <!-- Initialize arguments -->
-{{- $class := "" -}}
-{{- $style := "" -}}
-{{- $wrapper := "" -}}
-{{- $spacing := true -}}
-{{- if .IsNamedParams -}}
-    {{- $class = .Get "class" -}}
-    {{- $style = .Get "style" -}}
-    {{- $wrapper = .Get "wrapper" -}}
-    {{- $spacing = .Get "spacing" | default (not (in (split $wrapper " ") "fa-li")) -}}
-{{- else -}}
-    {{- $class = delimit .Params " " -}}
-{{- end -}}
-
-{{- if not $class -}}
-    {{- errorf "Expected icon name: %s" .Position -}}
+{{- $icon := cond .IsNamedParams (or $args.icon $args.class) (delimit .Params " ") -}}
+{{- $spacing := $args.spacing | default (not (in (split $args.wrapper " ") "fa-li")) -}}
+{{- if not $icon -}}
+    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
+        "partial"  "shortcodes/fa.html" 
+        "warnid"   "warn-invalid-arguments"
+        "msg"      "Invalid arguments"
+        "details"  (slice "Expected icon name")
+        "file"     page.File
+        "position" .Position
+    )}}
     {{ $error = true }}
 {{- end -}}
 
 <!-- Main code -->
 {{- if not $error -}}
-    {{- partial "assets/icon.html" (dict "icon" (printf "fa %s" $class) "style" $style "wrapper" $wrapper "spacing" $spacing) }}
+    {{- partial "assets/icon.html" (dict
+        "icon"    (printf "fa %s" $icon)
+        "style"   (or $args.iconStyle $args.style)
+        "wrapper" $args.wrapper
+        "spacing" $spacing
+    ) -}}
 {{- end -}}
