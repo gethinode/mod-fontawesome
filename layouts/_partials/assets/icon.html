@@ -1,18 +1,25 @@
-<!-- 
-    Copyright © 2024 The Hinode Team / Mark Dumay. All rights reserved.
+{{/* 
+    Copyright © 2024 - 2025 The Hinode Team / Mark Dumay. All rights reserved.
     Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
     Visit gethinode.com/license for more details.
--->
+*/}}
 
-{{- $error := false -}}
+{{ $error := false }}
 
-<!-- Validate arguments -->
-{{- if partial "utilities/IsInvalidArgs.html" (dict "structure" "icon" "args" . "group" "partial") -}}
-    {{- errorf "partial [assets/icon.html] - Invalid arguments" -}}
-    {{- $error = true -}}
-{{- end -}}
+{{/* Initialize arguments */}}
+{{ $args := partial "utilities/InitArgs.html" (dict "structure" "icon" "args" . "group" "partial")}}
+{{ if or $args.err $args.warnmsg }}
+    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
+        "partial" "assets/icon.html" 
+        "warnid"  "warn-invalid-arguments"
+        "msg"     "Invalid arguments"
+        "details" ($args.errmsg | append $args.warnmsg)
+        "file"    page.File
+    )}}
+    {{ $error = $args.err }}
+{{ end }}
 
-<!-- Initialize arguments -->
+{{/* Initialize local arguments */}}
 <!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
 {{- $missing := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><path d=\"M384 80c8.8 0 16 7.2 16 16V416c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V96c0-8.8 7.2-16 16-16H384zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z\"/></svg>" -}}
 {{- $icon := .icon -}}
