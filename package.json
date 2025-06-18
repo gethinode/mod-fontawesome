@@ -1,6 +1,6 @@
 {
   "name": "@gethinode/mod-fontawesome",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A Hugo module to add Font Awesome icons to your Hinode site",
   "keywords": [
     "hugo",
