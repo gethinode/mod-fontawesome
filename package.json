@@ -44,7 +44,7 @@
   },
   "homepage": "https://gethinode.com",
   "devDependencies": {
-    "@commitlint/cli": "^19.8.1",
+    "@commitlint/cli": "^20.0.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@fortawesome/fontawesome-free": "^7.0.1",
     "@semantic-release/exec": "^7.1.0",
