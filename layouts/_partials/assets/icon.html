@@ -98,7 +98,7 @@
                 {{- end -}}
                 
                 {{- $output = printf $inject $family $name $attr (or $style "") -}}
-                {{- if site.Params.modules.fontawesome.embed -}}
+                {{- if and (site.Params.modules.fontawesome.embed) ( page ) -}}
                     {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
                     {{- $output = printf `%s<use href="#%s-%s"></use></svg>` $definition $family $name -}}
                     {{- $entry := replaceRE "^<svg " (printf `<symbol id="%s-%s"` $family $name) $content -}}
