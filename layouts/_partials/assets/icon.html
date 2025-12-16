@@ -5,6 +5,10 @@
 */}}
 
 {{ $error := false }}
+{{ $sizes := slice
+    "fa-2xs" "fa-xs" "fa-sm" "fa-lg" "fa-xl" "fa-2xl"
+    "fa-1x" "fa-2x" "fa-3x" "fa-4x" "fa-5x" "fa-6x" "fa-7x" "fa-8x" "fa-9x" "fa-10x"
+}}
 
 {{/* Initialize arguments */}}
 {{ $args := partial "utilities/InitArgs.html" (dict "structure" "icon" "args" . "group" "partial")}}
@@ -32,7 +36,16 @@
 {{- $wrapper := $args.wrapper -}}
 {{- if $wrapper -}}
     {{- $wrapper = printf "%s fa-wrapper" $wrapper -}}
-    {{- $icon = printf "%s fa-fluid" $icon -}}
+    
+    {{/* Add fa-fluid class unless there is an explicit icon size set */}}
+    {{ $fluid := true }}
+    {{ range split $icon " " }}
+        {{ if in $sizes . }}
+            {{ $fluid = false }}
+            {{ break }}
+        {{ end }}
+    {{ end }}
+    {{ if $fluid }}{{ $icon = printf "%s fa-fluid" $icon }}{{ end }}
 {{- end -}}
 
 {{- $style := or $args.inlineStyle $args.style -}}
@@ -96,7 +109,6 @@
                     {{- $inject = replaceRE "width=\"(.*?)\"" "" $inject -}}
                     {{- $inject = replaceRE "height=\"(.*?)\"" "" $inject -}}
                 {{- end -}}
-                
                 {{- $output = printf $inject $family $name $attr (or $style "") -}}
                 {{- if and (site.Params.modules.fontawesome.embed) ( page ) -}}
                     {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
