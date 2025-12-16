@@ -67,5 +67,5 @@ date: 2023-08-02
 ## Stacked icon
 
 {{< fas circle fa-stack-2x >}}
-{{< fas plus fa-stack-1x fa-inverse >}}
+{{< fas fire fa-stack-1x fa-inverse >}}
 {.fa-stack .fa-2x}
