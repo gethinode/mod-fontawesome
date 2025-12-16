@@ -63,3 +63,9 @@ date: 2023-08-02
 ## Fluid icon with path
 
 {{< icon src="fa-house.svg" wrapper="w-25" >}}
+
+## Stacked icon
+
+{{< fas circle fa-stack-2x >}}
+{{< fas plus fa-stack-1x fa-inverse >}}
+{.fa-stack .fa-2x}
