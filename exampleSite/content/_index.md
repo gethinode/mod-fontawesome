@@ -69,3 +69,29 @@ date: 2023-08-02
 {{< fas circle fa-stack-2x >}}
 {{< fas fire fa-stack-1x fa-inverse >}}
 {.fa-stack .fa-2x}
+
+## Scale parameter
+
+The `scale` parameter applies a scale transformation to SVG icons, useful for removing padding inherent to icon designs.
+
+### Basic scale examples
+
+{{< icon icon="fas heart fa-4x" scale=1.15 >}}
+{{< fas icon="star fa-4x" scale=1.2 >}}
+{{< fa icon="circle fa-4x" scale=1.1 >}}
+
+### Scale with animations
+
+<div class="fa-3x" style="color: purple">
+  {{< icon icon="fas heart fa-beat" scale=1.15 inline-style="--fa-animation-duration: 0.5s;" >}}
+  {{< icon icon="fas star fa-spin" scale=1.2 inline-style="--fa-animation-duration: 2s;" >}}
+</div>
+
+### Different scale levels
+
+{{< fas icon="circle fa-2x" scale=1.0 >}} 1.0x
+{{< fas icon="circle fa-2x" scale=1.05 >}} 1.05x
+{{< fas icon="circle fa-2x" scale=1.075 >}} 1.075x
+{{< fas icon="circle fa-2x" scale=1.1 >}} 1.1x
+{{< fas icon="circle fa-2x" scale=1.5 >}} 1.5x
+{{< fas icon="circle fa-2x" scale=2.0 >}} 2.0x
