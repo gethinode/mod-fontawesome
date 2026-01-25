@@ -49,6 +49,7 @@
 {{- end -}}
 
 {{- $style := or $args.inlineStyle $args.style -}}
+{{- $scale := cond $args.scale (float $args.scale) 1.0 -}}
 {{- $output := "" -}}
 
 <!-- Main code -->
@@ -104,9 +105,13 @@
                 {{- $regex := printf `%s((?:.|\n)*)%s` "<!--" "-->" -}}
                 {{- $content := (replaceRE $regex "" $svg.Content) -}}
 
-                {{- $replace := cond (in $icon "fa-stack")
-                    "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s"
-                    "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\" preserveAspectRatio=\"xMinYMin\"%s"
+                {{- $scaleAttr := "" -}}
+                {{- if ne $scale 1.0 -}}
+                    {{- $scaleAttr = printf " data-scale=\"%v\"" $scale -}}
+                {{- end -}}
+                {{- $replace := printf
+                    "class=\"svg-inline--fa %%s fa-%%s %%s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s%%s"
+                    $scaleAttr
                 -}}
                 {{- $inject := (replaceRE "xmlns=\"(.*?)\"" $replace $content) -}}
                 {{- if $custom -}}
