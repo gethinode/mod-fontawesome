@@ -4,9 +4,6 @@
 
 {{ else }}
 
-// Font awesome variables overrides for Hinode
-$font-path:                  "../fonts";
-
 // Import Font Awesome files
 @import "modules/fontawesome/fontawesome"; 
 @import "modules/fontawesome/regular";

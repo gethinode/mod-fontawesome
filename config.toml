@@ -20,7 +20,7 @@
     target = "assets/scss/modules/fontawesome"
   [[module.mounts]]
     source = "dist/webfonts"
-    target = "static/fonts"
+    target = "static/webfonts"
   [[module.mounts]]
     source = "dist/svgs"
     target = "assets/svgs/modules/fontawesome"
