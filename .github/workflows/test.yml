@@ -19,15 +19,34 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v6
+    - name: Check out repository
+      uses: actions/checkout@v6
+
     - name: Install Go
       uses: actions/setup-go@v6
       with:
         go-version: ">1.0.0"
-    - name: Use Node.js ${{ matrix.node-version }}
+
+    - name: Set up Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v6
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run test
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install Dart Sass
+      run:  |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          sudo snap install dart-sass
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          brew install sass/sass/sass
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+          choco install sass
+        fi
+      shell: bash
+
+    - name: Perform clean install of npm
+      run:  npm ci
+
+    - name: Run the tests
+      run: npm run test
