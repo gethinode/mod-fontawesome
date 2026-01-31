@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0
           # Make sure the release step uses its own credentials
           persist-credentials: false
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
