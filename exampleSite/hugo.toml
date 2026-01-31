@@ -8,6 +8,12 @@ unsafe = true
 [markup.goldmark.parser.attribute]
 block = true
 
+[params.modules.fontawesome]
+  embed = true
+  inline = false
+  debug = true
+  skipMissing = false
+
 [module]
   # Build and serve using local mod-fontawesome clone declared in the named Hugo workspace:
   workspace = "mod-fontawesome.work"

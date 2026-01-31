@@ -19,7 +19,8 @@ arguments:
     comment: >-
       When set, applies a scale transformation to the SVG content. For example,
       the scale value `1.15` increases the content size with 15%. You can
-      use this to remove any padding inherent to the SVG content.
+      use this to remove any padding inherent to the SVG content. Only
+      applicable when using inline icons, it does not apply to webfonts.
   # deprecated arguments
   class:
     type: string

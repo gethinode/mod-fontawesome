@@ -30,22 +30,15 @@
 {{- $src := $args.src -}}
 
 {{- if and (not $icon) (not $src) -}}
-    {{- errorf "partial [assets/icon.html] - Expected value for param 'icon' or 'src'" -}}
+    {{ errorf "partial [assets/icon.html] - Missing value for param 'icon' or 'src'" }}
 {{- end -}}
 
 {{- $wrapper := $args.wrapper -}}
 {{- if $wrapper -}}
-    {{- $wrapper = printf "%s fa-wrapper" $wrapper -}}
-
-    {{/* Add fa-fluid class unless there is an explicit icon size set */}}
-    {{ $fluid := true }}
-    {{ range split $icon " " }}
-        {{ if in $sizes . }}
-            {{ $fluid = false }}
-            {{ break }}
-        {{ end }}
-    {{ end }}
-    {{ if $fluid }}{{ $icon = printf "%s fa-fluid" $icon }}{{ end }}
+    {{/* Handle fa-wrapper special case only when it's the exact value */}}
+    {{- if eq $wrapper "fa-wrapper" -}}
+        {{- $wrapper = cond (in $args.class "fa-fluid") "w-100" "" -}}
+    {{- end -}}
 {{- end -}}
 
 {{- $style := or $args.inlineStyle $args.style -}}
@@ -54,80 +47,116 @@
 
 <!-- Main code -->
 {{- if not $error }}
+    {{- if $style }}
+        {{- $style = printf " style=\"%s\"" $style }}
+    {{- end -}}
+
+    {{- $family := "" -}}
+    {{- $name := "" -}}
+    {{- $attr := "" -}}
+    {{- $custom := false -}}
+
     {{- if $src -}}
-        {{- if site.Params.modules.fontawesome.debug -}}
-            {{- printf "<!-- <svg src=\"%s\" class=\"%s\"> -->" $src (or $style "") | safeHTML }}
-        {{ end -}}
-        <div {{ with $wrapper }}class="{{ . }}"{{ end }}>
-            <object width=70 height=70 class="dynamic-svg" type="image/svg+xml" data="{{ $src }}" data-class="{{ $icon }}" data-style="{{ $style | safeCSS }}"></object>
-        </div>
+        {{/* When src is provided, icon parameter contains only classes (or is empty) */}}
+        {{- $attr = default "" $icon -}}
+        {{- $family = "src" -}}
+        {{- $name = path.BaseName $src -}}
     {{- else -}}
-        {{- if $style }}
-            {{- $style = printf " style=\"%s\"" $style }}
-        {{- end -}}
-
+        {{/* Normal parsing for icon family and name */}}
         {{- $icon_class := split $icon " " -}}
-        {{- $attr := delimit (after 2 $icon_class) " " -}}
-
-        {{- $family := (index $icon_class 0) -}}
+        {{- $attr = delimit (after 2 $icon_class) " " -}}
+        {{- $family = (index $icon_class 0) -}}
         {{- $supportedFamilies := slice "fas" "fa-solid" "fa" "fa-regular" "fab" "fa-brands" -}}
-        {{- $custom := not (in $supportedFamilies $family) -}}
+        {{- $custom = not (in $supportedFamilies $family) -}}
         {{- $family = replace $family "fa-solid" "fas" -}}
         {{- $family = replace $family "fa-regular" "fa" -}}
         {{- $family = replace $family "fa-brands" "fab" -}}
-
-        {{- $name := index $icon_class 1 -}}
+        {{- $name = index $icon_class 1 -}}
         {{- $name = strings.TrimPrefix "fa-" $name -}}
-        {{- $output = printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
+    {{- end -}}
 
-        {{- if and site.Params.modules.fontawesome.debug site.Params.modules.fontawesome.inline -}}
-            {{- printf "<!-- %s -->" $output | safeHTML }}
-        {{ end -}}
+    {{- $output = printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
 
-        {{- if site.Params.modules.fontawesome.inline -}}
-            {{- $path := "" -}}
-            {{- if $custom -}}
-                {{- $path = printf "svgs/%s/%s.svg" $family $name -}}
+    {{- if and site.Params.modules.fontawesome.debug site.Params.modules.fontawesome.inline -}}
+        {{- printf "<!-- %s -->" $output | safeHTML }}
+    {{ end -}}
+
+    {{- if or site.Params.modules.fontawesome.inline $custom $src -}}
+        {{- $path := "" -}}
+        {{- $svg := "" -}}
+        {{- if $src -}}
+            {{- $svg = resources.Get $src -}}
+        {{- else if $custom -}}
+            {{- $path = printf "svgs/%s/%s.svg" $family $name -}}
+            {{- $svg = resources.Get $path -}}
+        {{- else -}}
+            {{- $path = printf "svgs/modules/fontawesome/%s-%s.svg" $family $name -}}
+            {{- $svg = resources.Get $path -}}
+        {{- end -}}
+        {{- if not $svg -}}
+            {{- $msg := printf "partial [assets/icon.html] - Cannot find icon: %s" (path.Join "assets" $path) -}}
+            {{- if site.Params.modules.fontawesome.skipMissing -}}
+                {{- warnf $msg -}}
+                {{- $svg = resources.FromString "svgs/modules/fontawesome/missing.svg" $missing -}}
             {{- else -}}
-                {{- $path = printf "svgs/modules/fontawesome/%s-%s.svg" $family $name -}}
+                {{- errorf $msg -}}
             {{- end -}}
-            {{- $svg := resources.Get $path -}}
-            {{- if not $svg -}}
-                {{- $msg := printf "partial [assets/icon.html] - Cannot find icon: %s" (path.Join "assets" $path) -}}
-                {{- if site.Params.modules.fontawesome.skipMissing -}}
-                    {{- warnf $msg -}}
-                    {{- $svg = resources.FromString "svgs/modules/fontawesome/missing.svg" $missing -}}
-                {{- else -}}
-                    {{- errorf $msg -}}
-                {{- end -}}
-            {{- end -}}
-            {{- if $svg -}}
-                {{- $regex := printf `%s((?:.|\n)*)%s` "<!--" "-->" -}}
-                {{- $content := (replaceRE $regex "" $svg.Content) -}}
+        {{- end -}}
+        {{- if $svg -}}
+            {{- $regex := printf `%s((?:.|\n)*)%s` "<!--" "-->" -}}
+            {{- $content := (replaceRE $regex "" $svg.Content) -}}
 
-                {{- $scaleAttr := "" -}}
-                {{- if ne $scale 1.0 -}}
-                    {{- $scaleAttr = printf " data-scale=\"%v\"" $scale -}}
+            {{- $scaleAttr := "" -}}
+            {{- if ne $scale 1.0 -}}
+                {{- $scaleAttr = printf " data-scale=\"%v\"" $scale -}}
+            {{- end -}}
+            {{- $replace := printf
+                "class=\"svg-inline--fa %%s fa-%%s %%s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s%%s"
+                $scaleAttr
+            -}}
+            {{- $inject := (replaceRE "xmlns=\"(.*?)\"" $replace $content) -}}
+            {{- $sizeAttrs := "" -}}
+            {{- if or $custom $src -}}
+                {{/* Calculate base dimensions from viewBox, let fa-Nx classes handle scaling */}}
+                {{- $viewBoxMatch := findRE `viewBox="([^"]+)"` $inject 1 -}}
+                {{- if $viewBoxMatch -}}
+                    {{- $viewBox := index $viewBoxMatch 0 -}}
+                    {{- $viewBox = replaceRE `viewBox="([^"]+)"` "$1" $viewBox -}}
+                    {{- $viewBoxParts := split $viewBox " " -}}
+                    {{- if ge (len $viewBoxParts) 4 -}}
+                        {{- $vbWidth := float (index $viewBoxParts 2) -}}
+                        {{- $vbHeight := float (index $viewBoxParts 3) -}}
+                        {{/* Base size matches Font Awesome default (1.25em width) */}}
+                        {{- $baseEm := 1.25 -}}
+                        {{- $heightEm := mul $baseEm (div $vbHeight $vbWidth) -}}
+                        {{- $sizeAttrs = printf ` width="%.2fem" height="%.2fem"` $baseEm $heightEm -}}
+                    {{- end -}}
                 {{- end -}}
-                {{- $replace := printf
-                    "class=\"svg-inline--fa %%s fa-%%s %%s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s%%s"
-                    $scaleAttr
-                -}}
-                {{- $inject := (replaceRE "xmlns=\"(.*?)\"" $replace $content) -}}
-                {{- if $custom -}}
-                    {{- $inject = replaceRE "width=\"(.*?)\"" "" $inject -}}
-                    {{- $inject = replaceRE "height=\"(.*?)\"" "" $inject -}}
+                {{- $inject = replaceRE "width=\"(.*?)\"" "" $inject -}}
+                {{- $inject = replaceRE "height=\"(.*?)\"" "" $inject -}}
+                {{/* Add size attributes before viewBox */}}
+                {{- $inject = replaceRE "viewBox=" (printf "%sviewBox=" $sizeAttrs) $inject -}}
+            {{- end -}}
+            {{- $output = printf $inject $family $name $attr (or $style "") -}}
+            {{- if and (site.Params.modules.fontawesome.embed) ( page ) -}}
+                {{- $symbolFamily := $family -}}
+                {{- $symbolName := $name -}}
+                {{- if $src -}}
+                    {{- $symbolFamily = "src" -}}
+                    {{- $symbolName = path.BaseName $src -}}
                 {{- end -}}
-                {{- $output = printf $inject $family $name $attr (or $style "") -}}
-                {{- if and (site.Params.modules.fontawesome.embed) ( page ) -}}
-                    {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
-                    {{- $output = printf `%s<use href="#%s-%s"></use></svg>` $definition $family $name -}}
-                    {{- $entry := replaceRE "^<svg " (printf `<symbol id="%s-%s"` $family $name) $content -}}
-                    {{- $entry = replaceRE "</svg>$" "</symbol>" $entry -}}
+                {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
+                {{- $output = printf `%s<use href="#%s-%s"></use></svg>` $definition $symbolFamily $symbolName -}}
+                {{- $entry := replaceRE "^<svg " (printf `<symbol id="%s-%s"` $symbolFamily $symbolName) $content -}}
+                {{- $entry = replaceRE "</svg>$" "</symbol>" $entry -}}
+                {{- if or $custom $src -}}
+                    {{- $entry = replaceRE "width=\"(.*?)\"" "" $entry -}}
+                    {{- $entry = replaceRE "height=\"(.*?)\"" "" $entry -}}
+                {{- else -}}
                     {{- $entry = replaceRE "viewBox=\"(.*?)\"" "" $entry -}}
-                    {{- $entry = replaceRE "xmlns=\"(.*?)\"" "" $entry -}}
-                    {{- page.Scratch.Add "icons" (slice $entry) -}}
                 {{- end -}}
+                {{- $entry = replaceRE "xmlns=\"(.*?)\"" "" $entry -}}
+                {{- page.Scratch.Add "icons" (slice $entry) -}}
             {{- end -}}
         {{- end -}}
     {{- end -}}

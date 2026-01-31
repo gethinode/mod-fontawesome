@@ -36,6 +36,9 @@ Hinode is a clean blog theme for [Hugo][hugo], an open-source static site genera
 
 ## Configuration
 
+> [!IMPORTANT]
+> Webfonts (`inline = false`) require Dart Sass to function correctly. See https://gohugo.io/functions/css/sass/#dart-sass for installation instructions.
+
 This module supports the following parameters (see the section `params.modules` in `config.toml`):
 
 | Setting                 | Default | Description |
