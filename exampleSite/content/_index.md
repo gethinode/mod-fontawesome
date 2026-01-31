@@ -41,7 +41,7 @@ date: 2023-08-02
 
 ## Fluid icon
 
-{{< fas icon="triangle-exclamation" wrapper="w-25" >}}
+{{< fas icon="triangle-exclamation fa-fluid" wrapper="w-25 fa-wrapper" >}}
 
 ## Custom icon
 
@@ -62,7 +62,7 @@ date: 2023-08-02
 
 ## Fluid icon with path
 
-{{< icon src="fa-house.svg" wrapper="w-25" >}}
+{{< icon src="fa-house.svg" icon="fa-fluid" wrapper="w-25 fa-wrapper" >}}
 
 ## Stacked icon
 
