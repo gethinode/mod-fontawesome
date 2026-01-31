@@ -62,6 +62,11 @@ Set in `params.modules` of `config.toml`:
 - `fontawesome.debug` (default: false) - Output original icon code as comments
 - `fontawesome.skipMissing` (default: false) - Warn instead of error on missing icons
 
+**Important:** When using webfonts (`inline = false`), Dart Sass is required to compile Font Awesome 7.x SCSS. Configure the transpiler in your stylesheet partial:
+```html
+{{- $options := (dict "transpiler" "dartsass" "targetPath" $target) -}}
+```
+
 ### Shortcode Usage
 
 All shortcodes delegate to the core `icon.html` partial:
