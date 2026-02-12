@@ -9,8 +9,8 @@ unsafe = true
 block = true
 
 [params.modules.fontawesome]
+  inline = true
   embed = true
-  inline = false
   debug = true
   skipMissing = false
 

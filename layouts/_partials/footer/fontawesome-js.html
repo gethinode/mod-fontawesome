@@ -1,0 +1,17 @@
+{{- if site.Params.modules.fontawesome.inline -}}
+  {{- $styles := site.Params.modules.fontawesome.styles | default (slice "solid" "regular" "brands") -}}
+
+  <!-- FontAwesome SVG+JS Core -->
+  <script src="/js/fontawesome/fontawesome.min.js"></script>
+
+  <!-- FontAwesome Icon Sets -->
+  {{- if in $styles "solid" -}}
+  <script src="/js/fontawesome/solid.min.js"></script>
+  {{- end -}}
+  {{- if in $styles "regular" -}}
+  <script src="/js/fontawesome/regular.min.js"></script>
+  {{- end -}}
+  {{- if in $styles "brands" -}}
+  <script src="/js/fontawesome/brands.min.js"></script>
+  {{- end -}}
+{{- end -}}

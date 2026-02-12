@@ -1,30 +1,50 @@
-{{ if site.Params.modules.fontawesome.inline }}
+{{- $inline := site.Params.modules.fontawesome.inline -}}
 
-@import "modules/fontawesome/svg-with-js"; 
-
+{{ if $inline }}
+// SVG mode - load SVG+JS support CSS
+@import "modules/fontawesome/svg-with-js";
 {{ else }}
-
-// Import Font Awesome files
-@import "modules/fontawesome/fontawesome"; 
+// Webfont mode - load FontAwesome webfont CSS
+@import "modules/fontawesome/fontawesome";
 @import "modules/fontawesome/regular";
 @import "modules/fontawesome/solid";
 @import "modules/fontawesome/brands";
-
 {{ end }}
 
-// define wrapper for fluid icons
+// FontAwesome fluid icon wrapper
 .fa-wrapper {
-    container: wrapper / inline-size;
+    container-type: inline-size;
+    container-name: wrapper;
 }
 
-// define fallback size for browsers not supporting containers
+// Fallback size
 .fa-fluid {
     font-size: 5rem;
 }
 
-// set size based on container width
-@container (min-width: 0) {
-    .fa-wrapper .fa-fluid {
-        font-size: 60cqi;
+// Container query scaling - SVG elements always need width/height
+@container wrapper (min-width: 0) {
+    // SVG elements need width/height regardless of mode
+    .fa-wrapper > svg {
+        width: 100cqi;
+        height: 100cqi;
+        // Ensure SVG scales properly
+        max-width: 100%;
+        max-height: 100%;
     }
+
+    {{ if $inline }}
+    // SVG mode - icon elements become SVG via FontAwesome JS
+    .fa-wrapper > i {
+        width: 100cqi;
+        height: 100cqi;
+        max-width: 100%;
+        max-height: 100%;
+    }
+    {{ else }}
+    // Webfont mode - font icons respond to font-size
+    .fa-wrapper > i {
+        font-size: 100cqi;
+    }
+    {{ end }}
 }

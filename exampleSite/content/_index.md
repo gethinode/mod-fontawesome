@@ -39,9 +39,28 @@ date: 2023-08-02
   {{< icon icon="fas cookie fa-spin" inline-style="--fa-animation-duration: 3s; --fa-animation-iteration-count: 5;--fa-animation-timing: ease-in-out;" >}}
 </div>
 
-## Fluid icon
+## Fluid Icons - Responsive Container-Based Sizing
 
+Fluid icons scale to fill their container using CSS container queries (100cqi).
+
+### Different Container Sizes
+
+25% width:
 {{< fas icon="triangle-exclamation fa-fluid" wrapper="w-25 fa-wrapper" >}}
+
+50% width:
+{{< fas icon="triangle-exclamation fa-fluid" wrapper="w-50 fa-wrapper" >}}
+
+75% width:
+{{< fas icon="triangle-exclamation fa-fluid" wrapper="w-75 fa-wrapper" >}}
+
+### Multiple sizes side-by-side
+
+<div style="display: flex; gap: 20px; align-items: start;">
+{{< fas icon="heart fa-fluid" wrapper="w-25 fa-wrapper" >}}
+{{< fas icon="heart fa-fluid" wrapper="w-50 fa-wrapper" >}}
+{{< fas icon="heart fa-fluid" wrapper="w-75 fa-wrapper" >}}
+</div>
 
 ## Custom icon
 
@@ -62,36 +81,19 @@ date: 2023-08-02
 
 ## Fluid icon with path
 
+Different container sizes with custom SVG:
+
+25% width:
 {{< icon src="fa-house.svg" icon="fa-fluid" wrapper="w-25 fa-wrapper" >}}
+
+50% width:
+{{< icon src="fa-house.svg" icon="fa-fluid" wrapper="w-50 fa-wrapper" >}}
+
+75% width:
+{{< icon src="fa-house.svg" icon="fa-fluid" wrapper="w-75 fa-wrapper" >}}
 
 ## Stacked icon
 
 {{< fas circle fa-stack-2x >}}
 {{< fas fire fa-stack-1x fa-inverse >}}
-{.fa-stack .fa-2x}
-
-## Scale parameter
-
-The `scale` parameter applies a scale transformation to SVG icons, useful for removing padding inherent to icon designs.
-
-### Basic scale examples
-
-{{< icon icon="fas heart fa-4x" scale=1.15 >}}
-{{< fas icon="star fa-4x" scale=1.2 >}}
-{{< fa icon="circle fa-4x" scale=1.1 >}}
-
-### Scale with animations
-
-<div class="fa-3x" style="color: purple">
-  {{< icon icon="fas heart fa-beat" scale=1.15 inline-style="--fa-animation-duration: 0.5s;" >}}
-  {{< icon icon="fas star fa-spin" scale=1.2 inline-style="--fa-animation-duration: 2s;" >}}
-</div>
-
-### Different scale levels
-
-{{< fas icon="circle fa-2x" scale=1.0 >}} 1.0x
-{{< fas icon="circle fa-2x" scale=1.05 >}} 1.05x
-{{< fas icon="circle fa-2x" scale=1.075 >}} 1.075x
-{{< fas icon="circle fa-2x" scale=1.1 >}} 1.1x
-{{< fas icon="circle fa-2x" scale=1.5 >}} 1.5x
-{{< fas icon="circle fa-2x" scale=2.0 >}} 2.0x
+{.fa-stack}

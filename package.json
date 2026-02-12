@@ -20,14 +20,6 @@
     "mod:tidy": "hugo mod tidy -s exampleSite",
     "mod:update": "rimraf _vendor && hugo mod get -u && npm run -s mod:vendor && npm run -s mod:tidy",
     "mod:vendor": "rimraf _vendor && hugo mod vendor",
-    "postinstall": "npm-run-all copy:** && npm run -s meta",
-    "copy:fonts": "cpy node_modules/@fortawesome/fontawesome-free/webfonts dist/webfonts --flat",
-    "copy:scss1": "cpy node_modules/@fortawesome/fontawesome-free/scss dist/scss --flat",
-    "copy:scss2": "cpy node_modules/@fortawesome/fontawesome-free/css/svg-with-js.css dist/scss --flat --rename=svg-with-js.scss",
-    "copy:svgs1": "cpy node_modules/@fortawesome/fontawesome-free/svgs-full/brands dist/svgs --flat --rename=fab-{{basename}}",
-    "copy:svgs2": "cpy node_modules/@fortawesome/fontawesome-free/svgs-full/regular dist/svgs --flat --rename=fa-{{basename}}",
-    "copy:svgs3": "cpy node_modules/@fortawesome/fontawesome-free/svgs-full/solid dist/svgs --flat --rename=fas-{{basename}}",
-    "meta": "bash meta.sh",
     "prepare": "node .husky/install.mjs",
     "test": "npm run -s build",
     "upgrade": "npx npm-check-updates -u && npm run -s mod:update",
@@ -43,10 +35,12 @@
     "url": "https://github.com/gethinode/hinode/issues"
   },
   "homepage": "https://gethinode.com",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.1.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^20.4.1",
     "@commitlint/config-conventional": "^20.4.1",
-    "@fortawesome/fontawesome-free": "^7.2.0",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
     "cpy-cli": "^7.0.0",
@@ -75,7 +69,6 @@
         "@semantic-release/git",
         {
           "assets": [
-            "dist",
             "package.json",
             "package-lock.json"
           ],
