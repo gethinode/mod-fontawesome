@@ -5,10 +5,6 @@
 */}}
 
 {{ $error := false }}
-{{ $sizes := slice
-    "fa-2xs" "fa-xs" "fa-sm" "fa-lg" "fa-xl" "fa-2xl"
-    "fa-1x" "fa-2x" "fa-3x" "fa-4x" "fa-5x" "fa-6x" "fa-7x" "fa-8x" "fa-9x" "fa-10x"
-}}
 
 {{/* Initialize arguments */}}
 {{ $args := partial "utilities/InitArgs.html" (dict "structure" "icon" "args" . "group" "partial")}}
@@ -23,9 +19,6 @@
     {{ $error = $args.err }}
 {{ end }}
 
-{{/* Initialize local arguments */}}
-<!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
-{{- $missing := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><path d=\"M384 80c8.8 0 16 7.2 16 16V416c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V96c0-8.8 7.2-16 16-16H384zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z\"/></svg>" -}}
 {{- $icon := $args.icon -}}
 {{- $src := $args.src -}}
 
@@ -42,10 +35,9 @@
 {{- end -}}
 
 {{- $style := or $args.inlineStyle $args.style -}}
-{{- $scale := cond $args.scale (float $args.scale) 1.0 -}}
 {{- $output := "" -}}
+{{- $inline := site.Params.modules.fontawesome.inline -}}
 
-<!-- Main code -->
 {{- if not $error }}
     {{- if $style }}
         {{- $style = printf " style=\"%s\"" $style }}
@@ -54,112 +46,115 @@
     {{- $family := "" -}}
     {{- $name := "" -}}
     {{- $attr := "" -}}
-    {{- $custom := false -}}
+    {{- $isFontAwesome := false -}}
 
     {{- if $src -}}
-        {{/* When src is provided, icon parameter contains only classes (or is empty) */}}
+        {{/* Custom SVG from file - always load as static resource */}}
         {{- $attr = default "" $icon -}}
         {{- $family = "src" -}}
         {{- $name = path.BaseName $src -}}
-    {{- else -}}
-        {{/* Normal parsing for icon family and name */}}
-        {{- $icon_class := split $icon " " -}}
-        {{- $attr = delimit (after 2 $icon_class) " " -}}
-        {{- $family = (index $icon_class 0) -}}
-        {{- $supportedFamilies := slice "fas" "fa-solid" "fa" "fa-regular" "fab" "fa-brands" -}}
-        {{- $custom = not (in $supportedFamilies $family) -}}
-        {{- $family = replace $family "fa-solid" "fas" -}}
-        {{- $family = replace $family "fa-regular" "fa" -}}
-        {{- $family = replace $family "fa-brands" "fab" -}}
-        {{- $name = index $icon_class 1 -}}
-        {{- $name = strings.TrimPrefix "fa-" $name -}}
-    {{- end -}}
-
-    {{- $output = printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
-
-    {{- if and site.Params.modules.fontawesome.debug site.Params.modules.fontawesome.inline -}}
-        {{- printf "<!-- %s -->" $output | safeHTML }}
-    {{ end -}}
-
-    {{- if or site.Params.modules.fontawesome.inline $custom $src -}}
-        {{- $path := "" -}}
-        {{- $svg := "" -}}
-        {{- if $src -}}
-            {{- $svg = resources.Get $src -}}
-        {{- else if $custom -}}
-            {{- $path = printf "svgs/%s/%s.svg" $family $name -}}
-            {{- $svg = resources.Get $path -}}
-        {{- else -}}
-            {{- $path = printf "svgs/modules/fontawesome/%s-%s.svg" $family $name -}}
-            {{- $svg = resources.Get $path -}}
-        {{- end -}}
-        {{- if not $svg -}}
-            {{- $msg := printf "partial [assets/icon.html] - Cannot find icon: %s" (path.Join "assets" $path) -}}
-            {{- if site.Params.modules.fontawesome.skipMissing -}}
-                {{- warnf $msg -}}
-                {{- $svg = resources.FromString "svgs/modules/fontawesome/missing.svg" $missing -}}
-            {{- else -}}
-                {{- errorf $msg -}}
-            {{- end -}}
-        {{- end -}}
+        {{- $svg := resources.Get $src -}}
         {{- if $svg -}}
-            {{- $regex := printf `%s((?:.|\n)*)%s` "<!--" "-->" -}}
+            {{- $regex := printf `%s((?:.|\\n)*)%s` "<!--" "-->" -}}
             {{- $content := (replaceRE $regex "" $svg.Content) -}}
+            {{- $inject := (replaceRE "xmlns=\\\"(.*?)\\\"" (printf "class=\"svg-inline--fa %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $attr (or $style "")) $content) -}}
+            {{/* Remove fixed width/height only for fluid icons */}}
+            {{- if in $attr "fa-fluid" -}}
+                {{- $inject = replaceRE "width=\\\"(.*?)\\\"" "" $inject -}}
+                {{- $inject = replaceRE "height=\\\"(.*?)\\\"" "" $inject -}}
+            {{- end -}}
+            {{- $output = $inject -}}
 
-            {{- $scaleAttr := "" -}}
-            {{- if ne $scale 1.0 -}}
-                {{- $scaleAttr = printf " data-scale=\"%v\"" $scale -}}
-            {{- end -}}
-            {{- $replace := printf
-                "class=\"svg-inline--fa %%s fa-%%s %%s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s%%s"
-                $scaleAttr
-            -}}
-            {{- $inject := (replaceRE "xmlns=\"(.*?)\"" $replace $content) -}}
-            {{- $sizeAttrs := "" -}}
-            {{- if or $custom $src -}}
-                {{/* Calculate base dimensions from viewBox, let fa-Nx classes handle scaling */}}
-                {{- $viewBoxMatch := findRE `viewBox="([^"]+)"` $inject 1 -}}
-                {{- if $viewBoxMatch -}}
-                    {{- $viewBox := index $viewBoxMatch 0 -}}
-                    {{- $viewBox = replaceRE `viewBox="([^"]+)"` "$1" $viewBox -}}
-                    {{- $viewBoxParts := split $viewBox " " -}}
-                    {{- if ge (len $viewBoxParts) 4 -}}
-                        {{- $vbWidth := float (index $viewBoxParts 2) -}}
-                        {{- $vbHeight := float (index $viewBoxParts 3) -}}
-                        {{/* Base size matches Font Awesome default (1.25em width) */}}
-                        {{- $baseEm := 1.25 -}}
-                        {{- $heightEm := mul $baseEm (div $vbHeight $vbWidth) -}}
-                        {{- $sizeAttrs = printf ` width="%.2fem" height="%.2fem"` $baseEm $heightEm -}}
-                    {{- end -}}
-                {{- end -}}
-                {{- $inject = replaceRE "width=\"(.*?)\"" "" $inject -}}
-                {{- $inject = replaceRE "height=\"(.*?)\"" "" $inject -}}
-                {{/* Add size attributes before viewBox */}}
-                {{- $inject = replaceRE "viewBox=" (printf "%sviewBox=" $sizeAttrs) $inject -}}
-            {{- end -}}
-            {{- $output = printf $inject $family $name $attr (or $style "") -}}
-            {{- if and (site.Params.modules.fontawesome.embed) ( page ) -}}
-                {{- $symbolFamily := $family -}}
-                {{- $symbolName := $name -}}
-                {{- if $src -}}
-                    {{- $symbolFamily = "src" -}}
-                    {{- $symbolName = path.BaseName $src -}}
-                {{- end -}}
+            {{/* Handle embed mode - convert to symbol reference */}}
+            {{- if and (site.Params.modules.fontawesome.embed) (page) -}}
+                {{- $symbolId := printf "%s-%s" $family $name -}}
                 {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
-                {{- $output = printf `%s<use href="#%s-%s"></use></svg>` $definition $symbolFamily $symbolName -}}
-                {{- $entry := replaceRE "^<svg " (printf `<symbol id="%s-%s"` $symbolFamily $symbolName) $content -}}
+                {{- $output = printf `%s<use href="#%s"></use></svg>` $definition $symbolId -}}
+
+                {{/* Create symbol definition and add to page scratch */}}
+                {{- $entry := replaceRE "^<svg " (printf `<symbol id="%s"` $symbolId) $content -}}
                 {{- $entry = replaceRE "</svg>$" "</symbol>" $entry -}}
-                {{- if or $custom $src -}}
-                    {{- $entry = replaceRE "width=\"(.*?)\"" "" $entry -}}
-                    {{- $entry = replaceRE "height=\"(.*?)\"" "" $entry -}}
-                {{- else -}}
-                    {{- $entry = replaceRE "viewBox=\"(.*?)\"" "" $entry -}}
-                {{- end -}}
                 {{- $entry = replaceRE "xmlns=\"(.*?)\"" "" $entry -}}
+                {{/* Remove width/height from symbol definition */}}
+                {{- $entry = replaceRE "width=\"(.*?)\"" "" $entry -}}
+                {{- $entry = replaceRE "height=\"(.*?)\"" "" $entry -}}
                 {{- page.Scratch.Add "icons" (slice $entry) -}}
             {{- end -}}
         {{- end -}}
+    {{- else -}}
+        {{/* Parse icon family and name */}}
+        {{- $icon_class := split $icon " " -}}
+        {{- $family = (index $icon_class 0) -}}
+        {{- $attr = delimit (after 2 $icon_class) " " -}}
+
+        {{/* Normalize and check FontAwesome families */}}
+        {{- $family = replace $family "fa-solid" "fas" -}}
+        {{- $family = replace $family "fa-regular" "fa" -}}
+        {{- $family = replace $family "fa-brands" "fab" -}}
+        {{- $supportedFAFamilies := slice "fas" "fa" "fab" -}}
+        {{- $isFontAwesome = in $supportedFAFamilies $family -}}
+
+        {{- if $isFontAwesome -}}
+            {{/* FontAwesome icon - always output simple <i> tag */}}
+            {{/* FontAwesome JS (inline=true) or CSS (inline=false) handles rendering */}}
+            {{- $name = index $icon_class 1 -}}
+            {{- $name = strings.TrimPrefix "fa-" $name -}}
+            {{- $output = printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
+        {{- else -}}
+            {{/* Other icon families (Bootstrap Icons, Material Design Icons, etc.) */}}
+            {{- $name = index $icon_class 1 -}}
+
+            {{- if $inline -}}
+                {{/* SVG mode - load static SVG for non-FontAwesome icons */}}
+                {{- $path := printf "svgs/%s/%s.svg" $family $name -}}
+                {{- $svg := resources.Get $path -}}
+                {{- if not $svg -}}
+                    {{- $msg := printf "partial [assets/icon.html] - Cannot find icon: %s" (path.Join "assets" $path) -}}
+                    {{- if site.Params.modules.fontawesome.skipMissing -}}
+                        {{- warnf $msg -}}
+                        {{/* Fallback to webfont icon class */}}
+                        {{- $output = printf "<i class=\"%s %s-%s %s\"%s></i>" $family $family $name $attr (or $style "") -}}
+                    {{- else -}}
+                        {{- errorf $msg -}}
+                    {{- end -}}
+                {{- else -}}
+                    {{/* Process SVG content */}}
+                    {{- $regex := printf `%s((?:.|\\n)*)%s` "<!--" "-->" -}}
+                    {{- $content := (replaceRE $regex "" $svg.Content) -}}
+                    {{- $inject := (replaceRE "xmlns=\\\"(.*?)\\\"" (printf "class=\"svg-inline--fa %s %s-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $family $family $name $attr (or $style "")) $content) -}}
+                    {{/* Remove fixed width/height only for fluid icons */}}
+                    {{- if in $attr "fa-fluid" -}}
+                        {{- $inject = replaceRE "width=\\\"(.*?)\\\"" "" $inject -}}
+                        {{- $inject = replaceRE "height=\\\"(.*?)\\\"" "" $inject -}}
+                    {{- end -}}
+                    {{- $output = $inject -}}
+
+                    {{/* Handle embed mode - convert to symbol reference */}}
+                    {{- if and (site.Params.modules.fontawesome.embed) (page) -}}
+                        {{- $symbolId := printf "%s-%s" $family $name -}}
+                        {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
+                        {{- $output = printf `%s<use href="#%s"></use></svg>` $definition $symbolId -}}
+
+                        {{/* Create symbol definition and add to page scratch */}}
+                        {{- $entry := replaceRE "^<svg " (printf `<symbol id="%s"` $symbolId) $content -}}
+                        {{- $entry = replaceRE "</svg>$" "</symbol>" $entry -}}
+                        {{- $entry = replaceRE "xmlns=\"(.*?)\"" "" $entry -}}
+                        {{/* Remove width/height from symbol definition */}}
+                        {{- $entry = replaceRE "width=\"(.*?)\"" "" $entry -}}
+                        {{- $entry = replaceRE "height=\"(.*?)\"" "" $entry -}}
+                        {{- page.Scratch.Add "icons" (slice $entry) -}}
+                    {{- end -}}
+                {{- end -}}
+            {{- else -}}
+                {{/* Webfont mode - output simple <i> tag for CSS to handle */}}
+                {{- $output = printf "<i class=\"%s %s-%s %s\"%s></i>" $family $family $name $attr (or $style "") -}}
+            {{- end -}}
+        {{- end -}}
     {{- end -}}
+
+    {{- if and site.Params.modules.fontawesome.debug $isFontAwesome -}}
+        {{- printf "<!-- FontAwesome: %s -->" $output | safeHTML }}
+    {{ end -}}
 
     {{- with $wrapper -}}
         <div class="{{ . }}">{{ $output | safeHTML }}</div>

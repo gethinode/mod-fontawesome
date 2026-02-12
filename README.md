@@ -43,10 +43,25 @@ This module supports the following parameters (see the section `params.modules` 
 
 | Setting                 | Default | Description |
 |-------------------------|---------|-------------|
-| fontawesome.embed      | true    | If set, generates a symbol map with embedded vector images. Only works in conjunction with `inline`. Include the symbol with the partial `assets/symbols.html` (requires the current page context).|
-| fontawesome.inline      | true    | If set, uses inline vector images instead of web fonts. Both methods support Font Awesome styling and animation. However, when using vector images you cannot use aliases. Instead, use the default name of the icon. |
-| fontawesome.debug       | true    | If set, prints the original code `<i class="[...]" style=[...]></i>` as comments next to the inline vector image. |
-| fontawesome.skipMissing | false   | If set, displays a warning when an icon cannot be found. The missing icon is replaced with a dummy. By default, Hinode exits with an error when an icon is missing. |
+| fontawesome.embed      | false   | If set, generates a symbol map with embedded vector images. Only works with inline SVG mode (`inline = true`). Icons are defined once in a hidden `<svg>` element and referenced via `<use>`, reducing HTML size when icons are reused. Requires including the partial `{{- partial "assets/symbols.html" . -}}` in your layout (requires the current page context).|
+| fontawesome.inline      | true    | If set, uses inline SVG mode with FontAwesome JS. If false, uses web fonts via CSS. Both methods support Font Awesome styling and animation. |
+| fontawesome.debug       | false   | If set, prints debug information as comments in the generated HTML. |
+| fontawesome.skipMissing | false   | If set, displays a warning when an icon cannot be found instead of exiting with an error. |
+| fontawesome.styles      | ["solid", "regular", "brands"] | Array of FontAwesome icon sets to load when `inline=true`. Valid values: "solid", "regular", "brands". Omit this parameter to load all three. |
+
+**Example configuration:**
+
+```toml
+[params.modules.fontawesome]
+  inline = true  # Default to SVG mode
+
+  # Per-family overrides
+  [params.modules.fontawesome.renderMode]
+    fas = "svg"   # FontAwesome Solid uses SVG (explicit)
+    fa = "svg"    # FontAwesome Regular uses SVG (explicit)
+    fab = "font"  # FontAwesome Brands uses webfont (override)
+    bi = "font"   # Bootstrap Icons use webfont (override)
+```
 
 ## Notes
 

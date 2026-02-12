@@ -4,6 +4,8 @@ node_modules/
 exampleSite/public
 exampleSite/resources
 _vendor/
+dist/
+data/fa-icons.yml
 
 .DS_store
 .hugo_build.lock

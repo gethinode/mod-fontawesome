@@ -1,35 +1,44 @@
 [module]
   [module.hugoVersion]
     extended = true
-    min = "0.146.0"
+    min = "0.153.0"
     max = ""
+  # Mount FontAwesome SCSS (webfont CSS)
   [[module.mounts]]
-    source = 'assets'
-    target = 'assets'
-  [[module.mounts]]
-    source = 'data'
-    target = 'data'
-  [[module.mounts]]
-    source = 'layouts'
-    target = 'layouts'
-  [[module.mounts]]
-    source = 'static'
-    target = 'static'
-  [[module.mounts]]
-    source = "dist/scss"
+    source = "node_modules/@fortawesome/fontawesome-free/scss"
     target = "assets/scss/modules/fontawesome"
+  # Mount FontAwesome CSS (for svg-with-js.css)
   [[module.mounts]]
-    source = "dist/webfonts"
+    source = "node_modules/@fortawesome/fontawesome-free/css"
+    target = "assets/scss/modules/fontawesome"
+    includeFiles = ["svg-with-js.css"]
+  # Mount FontAwesome webfonts
+  [[module.mounts]]
+    source = "node_modules/@fortawesome/fontawesome-free/webfonts"
     target = "static/webfonts"
+  # Mount FontAwesome JS files for SVG+JS approach
   [[module.mounts]]
-    source = "dist/svgs"
-    target = "assets/svgs/modules/fontawesome"
+    source = "node_modules/@fortawesome/fontawesome-free/js"
+    target = "static/js/fontawesome"
+    includeFiles = ["fontawesome.min.js", "brands.min.js", "regular.min.js", "solid.min.js"]
+  # Mount module's own assets
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+  [[module.mounts]]
+    source = "data"
+    target = "data"
+  [[module.mounts]]
+    source = "layouts"
+    target = "layouts"
+  [[module.mounts]]
+    source = "static"
+    target = "static"
   [[module.imports]]
     path = "github.com/gethinode/mod-utils/v5"
 
 [params.modules.fontawesome]
-  integration = "core"
-  embed = true
-  inline = true
-  debug = true
-  skipMissing = false
+  inline = true          # Use SVG+JS (true) or webfonts (false)
+  embed = true           # Use SVG symbol map (true)
+  debug = false          # Show original markup as comments (FontAwesome icons only)
+  skipMissing = false    # Warn vs. error on missing icons
