@@ -38,6 +38,7 @@
     path = "github.com/gethinode/mod-utils/v5"
 
 [params.modules.fontawesome]
+  integration = "core"
   inline = true          # Use SVG+JS (true) or webfonts (false)
   embed = true           # Use SVG symbol map (true)
   debug = false          # Show original markup as comments (FontAwesome icons only)
