@@ -89,9 +89,9 @@
 
         {{/* Normalize and check FontAwesome families */}}
         {{- $family = replace $family "fa-solid" "fas" -}}
-        {{- $family = replace $family "fa-regular" "fa" -}}
+        {{- $family = replace $family "fa-regular" "far" -}}
         {{- $family = replace $family "fa-brands" "fab" -}}
-        {{- $supportedFAFamilies := slice "fas" "fa" "fab" -}}
+        {{- $supportedFAFamilies := slice "fas" "far" "fa" "fab" -}}
         {{- $isFontAwesome = in $supportedFAFamilies $family -}}
 
         {{- if $isFontAwesome -}}
