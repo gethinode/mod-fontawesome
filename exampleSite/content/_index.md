@@ -9,6 +9,7 @@ date: 2023-08-02
 {{< fas code-compare fa-4x >}}
 {{< fab meta fa-4x >}}
 {{< fa folder-closed fa-4x >}}
+{{< far folder-closed fa-4x >}}
 
 ## Beat animation
 
