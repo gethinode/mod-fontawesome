@@ -18,7 +18,7 @@
     "build": "hugo --gc --minify -s exampleSite",
     "clean": "rimraf exampleSite/public exampleSite/resources",
     "mod:tidy": "hugo mod tidy -s exampleSite",
-    "mod:update": "rimraf _vendor && hugo mod get -u && npm run -s mod:vendor && npm run -s mod:tidy",
+    "mod:update": "rimraf _vendor && hugo mod get -u github.com/FortAwesome/Font-Awesome@7.x && cd exampleSite && hugo mod get -u github.com/FortAwesome/Font-Awesome@7.x && cd .. && hugo mod get -u ./... && npm run -s mod:vendor && npm run -s mod:tidy",
     "mod:vendor": "rimraf _vendor && hugo mod vendor",
     "prepare": "node .husky/install.mjs",
     "test": "npm run -s build",
@@ -35,9 +35,6 @@
     "url": "https://github.com/gethinode/hinode/issues"
   },
   "homepage": "https://gethinode.com",
-  "dependencies": {
-    "@fortawesome/fontawesome-free": "^7.1.0"
-  },
   "devDependencies": {
     "@commitlint/cli": "^20.4.1",
     "@commitlint/config-conventional": "^20.4.1",

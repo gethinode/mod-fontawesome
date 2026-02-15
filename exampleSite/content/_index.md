@@ -10,6 +10,7 @@ date: 2023-08-02
 {{< fab meta fa-4x >}}
 {{< fa folder-closed fa-4x >}}
 {{< far folder-closed fa-4x >}}
+{{< fas star fa-4x >}}
 
 ## Beat animation
 
@@ -44,7 +45,7 @@ date: 2023-08-02
 
 Fluid icons scale to fill their container using CSS container queries (100cqi).
 
-### Different Container Sizes
+### Triangle Exclamation Icon
 
 25% width:
 {{< fas icon="triangle-exclamation fa-fluid" wrapper="w-25 fa-wrapper" >}}
@@ -54,6 +55,17 @@ Fluid icons scale to fill their container using CSS container queries (100cqi).
 
 75% width:
 {{< fas icon="triangle-exclamation fa-fluid" wrapper="w-75 fa-wrapper" >}}
+
+### Star Icon
+
+25% width:
+{{< fas icon="star fa-fluid" wrapper="w-25 fa-wrapper" >}}
+
+50% width:
+{{< fas icon="star fa-fluid" wrapper="w-50 fa-wrapper" >}}
+
+75% width:
+{{< fas icon="star fa-fluid" wrapper="w-75 fa-wrapper" >}}
 
 ### Multiple sizes side-by-side
 
@@ -95,6 +107,9 @@ Different container sizes with custom SVG:
 
 ## Stacked icon
 
+Icons can be layered using FontAwesome's stacking feature. Use `fa-stack-2x` for the background icon and `fa-stack-1x` for the foreground icon. Wrap them in a container with the `fa-stack` class.
+
+<span class="fa-stack fa-4x">
 {{< fas circle fa-stack-2x >}}
 {{< fas fire fa-stack-1x fa-inverse >}}
-{.fa-stack}
+</span>

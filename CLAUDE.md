@@ -54,9 +54,9 @@ The module supports three rendering modes controlled by `inline` and `embed` par
 **1. SVG Symbols Mode (inline=true, embed=true):**
 - Loads static SVG files from Hugo resources at build time
 - Creates reusable SVG symbols with `<symbol>` and `<use>` references
-- Icons output as `<svg><use href="#fas-heart"></use></svg>` markup
+- Icons output as `<svg overflow="visible"><use href="#fas-heart"></use></svg>` markup
 - No JavaScript required - pure static SVG
-- Adjusts viewBox to prevent clipping for FA v7 icons with negative coordinates
+- Uses `overflow="visible"` attribute to prevent clipping of FA v7 icons with negative coordinates
 - Best for: Static sites, performance-critical applications, when JS is disabled
 - Requires: `{{- partial "assets/symbols.html" . -}}` in layout to output symbol definitions
 
@@ -191,9 +191,9 @@ All shortcodes delegate to the core `icon.html` partial:
 3. Rendering depends on mode:
    - **SVG symbols mode (`inline=true, embed=true`):**
      - Loads static SVG from `assets/svgs/fa/{family}/{name}.svg`
-     - Adjusts viewBox to add padding for FA v7 icons with negative coordinates
-     - Creates symbol reference: `<svg><use href="#fas-heart"></use></svg>`
-     - Stores symbol definition in page.Scratch for later output via `symbols.html` partial
+     - Creates symbol reference: `<svg overflow="visible" viewBox="..."><use href="#fas-heart"></use></svg>`
+     - Adds `overflow="visible"` attribute to prevent clipping of FA v7 icons with negative coordinates
+     - Stores symbol definition (with `overflow="visible"`) in page.Scratch for output via `symbols.html` partial
      - Animated icons (fa-spin, fa-beat, etc.) use inline SVG instead (no symbols)
    - **SVG+JS mode (`inline=true, embed=false`):**
      - Outputs simple `<i class="fas fa-heart"></i>` tag
@@ -203,12 +203,16 @@ All shortcodes delegate to the core `icon.html` partial:
      - CSS renders as webfont with ::before pseudo-element
 
 **For other icon libraries (Bootstrap Icons, etc.):**
-1. If `inline=true`: Load static SVG from `assets/svgs/{family}/{name}.svg`
-2. If `inline=false`: Output `<i>` tag for webfont rendering
+1. If `inline=true, embed=true`: Load static SVG from `assets/svgs/{family}/{name}.svg` and create symbol references (same as FontAwesome)
+2. If `inline=true, embed=false`: Load static SVG as inline SVG (no symbols)
+3. If `inline=false`: Output `<i>` tag for webfont rendering
+4. Width/height attributes removed to allow fa-2x, fa-4x, etc. sizing utilities to work
+5. Original class/fill attributes cleaned to prevent duplicates
 
 **For custom SVGs (src parameter):**
 1. Always load via `resources.Get` with basic SVG processing
-2. No mode-specific behavior
+2. In embed mode (`embed=true`): Creates symbol references like other icon types
+3. Width/height attributes removed to allow CSS sizing utilities
 
 ## Important Implementation Details
 
@@ -221,24 +225,69 @@ All shortcodes delegate to the core `icon.html` partial:
 
 **SVG Symbol Loading (SVG symbols mode: inline=true, embed=true):**
 - Loads static SVG files from `assets/svgs/fa/{family}/{name}.svg` at build time
-- Adjusts viewBox to add 40px padding top/bottom to prevent clipping of FA v7 icons
+- Uses original viewBox from FontAwesome (no adjustments)
+- Adds `overflow="visible"` SVG attribute to both symbol definitions and containing `<svg>` elements
+- This prevents clipping of FA v7 icons with paths extending beyond the viewBox (e.g., negative coordinates)
 - Creates reusable symbol definitions stored in page.Scratch
 - Symbol definitions output via `{{- partial "assets/symbols.html" . -}}` partial
-- Animated icons (fa-spin, fa-beat, etc.) use inline SVG instead of symbols
-- Stacked icons (fa-stack) also use inline SVG for proper CSS stacking
+- Animated icons (fa-spin, fa-beat, etc.) use inline SVG instead of symbols (for correct transform behavior)
 
 **CSS Loading:**
-- Always loads core `fontawesome.scss` (sizing utilities: fa-2x, fa-3x, animations, etc.)
-- Webfont mode (`inline=false`): Additionally loads solid.scss, regular.scss, brands.scss (with @font-face rules)
-- SVG symbols mode (`inline=true, embed=true`): Adds overflow and stacking support for SVG elements
-- SVG+JS mode (`inline=true, embed=false`): Only uses core utilities
-- No CSS conflicts between modes (conditional imports)
+- **SVG symbols mode** (`inline=true, embed=true`): Loads core utilities + custom SVG CSS
+  - Core utilities: sizing (fa-2x, fa-3x), animations (fa-spin, fa-beat), stacking (fa-stack), etc.
+  - Custom SVG CSS: vertical alignment, overflow handling, stacking support
+  - Vertical alignment matches FontAwesome's SVG+JS mode (base: `-0.125em`, size-specific overrides)
+- **Webfont mode** (`inline=false`): Loads core utilities + webfont CSS
+  - Core utilities: same as SVG symbols mode
+  - Webfont CSS: solid.scss, regular.scss, brands.scss (with @font-face rules)
+  - Custom SVG CSS: for custom SVG icons (vertical alignment, overflow handling)
+- **SVG+JS mode** (`inline=true, embed=false`): NO core utilities or custom CSS loaded
+  - FontAwesome JavaScript provides complete CSS (all sizing, animations, stacking, etc.)
+  - Loading core utilities in this mode causes CSS conflicts with FontAwesome's JS-injected styles
+  - Critical for stacked icons: core utilities' `.fa-stack` rules conflict with FA's runtime CSS
+- No CSS conflicts between modes due to conditional loading
 
-**ViewBox Adjustments for FA v7:**
-- Font Awesome 7.x icons can have paths with negative coordinates (e.g., y=-32)
-- Original viewBox (e.g., "0 0 512 512") clips these paths
-- Solution: Adjust viewBox to add padding (e.g., "0 -40 512 592")
-- Applied to symbol definitions only (not inline SVG or SVG+JS mode)
+**Clipping Prevention for FA v7 Icons:**
+- Font Awesome 7.x icons can have paths with negative coordinates (e.g., star icon has y=-18.9)
+- Standard viewBox (e.g., "0 0 512 512") would normally clip content outside these bounds
+- Solution: Add `overflow="visible"` SVG attribute (per [FontAwesome SVG Sprites documentation](https://docs.fontawesome.com/web/add-icons/svg-sprites/))
+- Applied to both symbol definitions (`<symbol overflow="visible">`) and containing SVG elements
+- Maintains original viewBox for proper scaling while allowing content to render beyond bounds
+- Alternative approaches (viewBox adjustment, inline SVG) caused vertical alignment or transform issues
+
+**Vertical Alignment in SVG Symbols Mode:**
+- Replicates FontAwesome's official SVG+JS vertical-align values (extracted from FontAwesome v7.2.0 JavaScript)
+- Base alignment: `vertical-align: -0.125em` for `.svg-inline--fa` class
+- Size-specific overrides to match FontAwesome's behavior:
+  - `.svg-inline--fa.fa-2xs`: `0.1em`
+  - `.svg-inline--fa.fa-xs`: `0em`
+  - `.svg-inline--fa.fa-sm`: `-0.0714285714em`
+  - `.svg-inline--fa.fa-lg`: `-0.2em`
+  - `.svg-inline--fa.fa-xl`: `-0.25em`
+  - `.svg-inline--fa.fa-2xl`: `-0.3125em`
+- Ensures consistent vertical centering across all three rendering modes (symbols, SVG+JS, webfonts)
+
+**Width/Height Removal for CSS Sizing:**
+- All icon types (FontAwesome, Bootstrap Icons, custom SVGs) have width/height attributes removed from SVG elements
+- Allows CSS sizing utilities (fa-2x, fa-3x, fa-4x, etc.) to work correctly
+- Icons scale based on `font-size` set by size classes, not fixed pixel dimensions
+- Only exception: Symbol definitions in embed mode have width/height removed to prevent conflicts
+
+**Stacked Icon Support Across All Modes:**
+- FontAwesome's icon stacking (using `fa-stack`, `fa-stack-1x`, `fa-stack-2x` classes) works correctly in all three rendering modes
+- **SVG symbols mode** (`inline=true, embed=true`):
+  - Uses symbol references for stacked icons (no inline SVG needed)
+  - Custom `.fa-stack` CSS provides proper positioning and sizing
+  - Icons scale correctly relative to each other (2x vs 1x)
+- **SVG+JS mode** (`inline=true, embed=false`):
+  - Core utilities CSS excluded to prevent conflicts with FontAwesome's JavaScript
+  - FontAwesome JS provides complete stacking CSS at runtime
+  - Critical fix: Loading core utilities' `.fa-stack` rules in this mode caused sizing conflicts
+- **Webfont mode** (`inline=false`):
+  - Core utilities CSS provides stacking support
+  - Webfonts render via ::before pseudo-elements with correct positioning
+- **Implementation**: `assets/scss/fontawesome.scss` conditionally excludes core utilities when `inline=true AND embed=false` to avoid CSS conflicts with FontAwesome's JavaScript-injected styles
+- Stacked icons also have spacing disabled (no `&nbsp;` between icons) to prevent layout issues
 
 **Removed Features (from v3):**
 - Custom scaling logic - Handled by FontAwesome or CSS
