@@ -44,8 +44,13 @@ h3 {
     /* Add border to visualize container boundaries */
     border: 2px dashed #ccc;
     background: #f9f9f9;
-    padding: 10px;
+    /* Use flex layout for centering */
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    /* Ensure container-type is maintained for container queries */
+    container-type: inline-size;
+    container-name: wrapper;
+    /* Allow FA v7 icons with negative coordinates to overflow */
+    overflow: visible;
 }

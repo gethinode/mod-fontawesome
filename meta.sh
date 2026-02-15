@@ -1,19 +1,28 @@
 #!/usr/bin/env bash
 
-# Generate fa-icons.yml from FontAwesome SVGs in node_modules
+# Generate fa-icons.yml from FontAwesome SVGs in vendored Hugo module
 # Format: - {family} {icon-name}
+# Note: Run 'hugo mod vendor' first to ensure _vendor directory is up to date
+
+VENDOR_PATH="_vendor/github.com/FortAwesome/Font-Awesome/svgs"
+
+if [ ! -d "$VENDOR_PATH" ]; then
+  echo "Error: Vendored FontAwesome not found at $VENDOR_PATH"
+  echo "Run 'hugo mod vendor' first to vendor the module"
+  exit 1
+fi
 
 {
   # Regular icons (fa prefix)
-  find node_modules/@fortawesome/fontawesome-free/svgs/regular -name "*.svg" -exec basename {} .svg \; | \
+  find "$VENDOR_PATH/regular" -name "*.svg" -exec basename {} .svg \; | \
     awk '{print "- fa " $0}'
 
   # Solid icons (fas prefix)
-  find node_modules/@fortawesome/fontawesome-free/svgs/solid -name "*.svg" -exec basename {} .svg \; | \
+  find "$VENDOR_PATH/solid" -name "*.svg" -exec basename {} .svg \; | \
     awk '{print "- fas " $0}'
 
   # Brand icons (fab prefix)
-  find node_modules/@fortawesome/fontawesome-free/svgs/brands -name "*.svg" -exec basename {} .svg \; | \
+  find "$VENDOR_PATH/brands" -name "*.svg" -exec basename {} .svg \; | \
     awk '{print "- fab " $0}'
 } | sort > data/fa-icons.yml
 

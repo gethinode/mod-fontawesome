@@ -1,14 +1,95 @@
 {{- $inline := site.Params.modules.fontawesome.inline -}}
+{{- $embed := site.Params.modules.fontawesome.embed -}}
 
-{{ if $inline }}
-// SVG mode - load SVG+JS support CSS
-@import "modules/fontawesome/svg-with-js";
-{{ else }}
-// Webfont mode - load FontAwesome webfont CSS
+{{ if not (and $inline (not $embed)) }}
+// Load FontAwesome core utilities (sizing, animations, stacked, etc.)
+// This provides fa-2x, fa-3x, fa-spin, fa-rotate-90, etc.
+// NOT loaded in SVG+JS mode - FontAwesome JavaScript provides complete CSS
 @import "modules/fontawesome/fontawesome";
-@import "modules/fontawesome/regular";
+{{ end }}
+
+{{ if not $inline }}
+// Webfont mode - load font family CSS with @font-face rules for webfonts
 @import "modules/fontawesome/solid";
+@import "modules/fontawesome/regular";
 @import "modules/fontawesome/brands";
+{{ end }}
+
+{{ if not (and $inline (not $embed)) }}
+// SVG icon styles - needed for SVG symbols mode and webfont mode (for custom SVG icons)
+// NOT loaded in SVG+JS mode - FontAwesome JavaScript provides its own CSS
+.svg-inline--fa,
+svg.svg-inline--fa {
+  overflow: visible;
+  height: 1em;
+  width: auto;
+  // Default vertical alignment for SVG icons
+  vertical-align: -0.125em;
+}
+
+// Size-specific vertical alignment overrides (from FontAwesome SVG+JS)
+.svg-inline--fa.fa-2xs {
+  vertical-align: 0.1em;
+}
+.svg-inline--fa.fa-xs {
+  vertical-align: 0em;
+}
+.svg-inline--fa.fa-sm {
+  vertical-align: -0.0714285714em;
+}
+.svg-inline--fa.fa-lg {
+  vertical-align: -0.2em;
+}
+.svg-inline--fa.fa-xl {
+  vertical-align: -0.25em;
+}
+.svg-inline--fa.fa-2xl {
+  vertical-align: -0.3125em;
+}
+{{ end }}
+
+{{ if and $inline $embed }}
+// SVG symbols mode - additional rules for symbol references
+
+// Allow symbols and use elements to render outside viewBox
+svg symbol,
+svg use {
+  overflow: visible;
+}
+
+// SVG stacking support (replicate FA's webfont stacking for SVG mode)
+.fa-stack {
+  display: inline-block;
+  height: 2em;
+  line-height: 2em;
+  position: relative;
+  vertical-align: middle;
+  width: 2.5em;
+
+  .svg-inline--fa {
+    position: absolute !important;
+    // Override FA core's inset: 0 to prevent stretching
+    top: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+
+    &.fa-stack-1x {
+      // 1x icon: 1em height, auto width maintains aspect ratio
+      height: 1em !important;
+      width: auto !important;
+      font-size: 1em !important;
+    }
+
+    &.fa-stack-2x {
+      // 2x icon: 2em height, auto width maintains aspect ratio
+      height: 2em !important;
+      width: auto !important;
+      font-size: 1em !important;
+    }
+  }
+}
 {{ end }}
 
 // FontAwesome fluid icon wrapper

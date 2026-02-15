@@ -34,6 +34,29 @@
 
 Hinode is a clean blog theme for [Hugo][hugo], an open-source static site generator. Hinode is available as a [template][repository_template], and a [main theme][repository]. This repository maintains a Hugo module to add [Font Awesome][fontawesome] icons to a Hinode site. Visit the Hinode documentation site for [installation instructions][hinode_docs].
 
+## Installation
+
+This module is imported automatically when using Hinode. To use it in your own Hugo site:
+
+1. **Add the module to your `hugo.toml`:**
+   ```toml
+   [module]
+     [[module.imports]]
+       path = "github.com/gethinode/mod-fontawesome/v4"
+   ```
+
+2. **Vendor the module (optional but recommended):**
+   ```bash
+   hugo mod vendor
+   ```
+
+3. **Use icons in your templates or content:**
+   ```hugo
+   {{- partial "assets/icon.html" (dict "icon" "fas fa-heart") -}}
+   ```
+
+No npm installation required - all Font Awesome assets are automatically included via Hugo modules.
+
 ## Configuration
 
 > [!IMPORTANT]
@@ -44,10 +67,9 @@ This module supports the following parameters (see the section `params.modules` 
 | Setting                 | Default | Description |
 |-------------------------|---------|-------------|
 | fontawesome.embed      | false   | If set, generates a symbol map with embedded vector images. Only works with inline SVG mode (`inline = true`). Icons are defined once in a hidden `<svg>` element and referenced via `<use>`, reducing HTML size when icons are reused. Requires including the partial `{{- partial "assets/symbols.html" . -}}` in your layout (requires the current page context).|
-| fontawesome.inline      | true    | If set, uses inline SVG mode with FontAwesome JS. If false, uses web fonts via CSS. Both methods support Font Awesome styling and animation. |
+| fontawesome.inline      | true    | If set, uses inline SVG mode by loading individual SVG files directly. If false, uses web fonts via CSS. SVG mode supports symbol maps (embed mode) and provides better rendering. Webfont mode is smaller but less flexible. |
 | fontawesome.debug       | false   | If set, prints debug information as comments in the generated HTML. |
 | fontawesome.skipMissing | false   | If set, displays a warning when an icon cannot be found instead of exiting with an error. |
-| fontawesome.styles      | ["solid", "regular", "brands"] | Array of FontAwesome icon sets to load when `inline=true`. Valid values: "solid", "regular", "brands". Omit this parameter to load all three. |
 
 **Example configuration:**
 
@@ -65,9 +87,35 @@ This module supports the following parameters (see the section `params.modules` 
 
 ## Notes
 
-The repository of [Font Awesome has changed its pattern for semantic versioning][fa_isue_17342]. As a result, [hugo does not pick up the latest version correctly][hugo_discussion_41861]. A workaround is to create a fork for version 6.x only and to use this as a source instead.
+### Hugo Module Architecture
 
-This repository ([mod-fontawesome][mod-fontawesome]) has chosen a different approach, which is more in line with the other modules maintained by Hinode. It downloads the latest npm release of Font Awesome and redistributes several selected files and folders. The steps are fully automated as part of a CI/CD process.
+This module imports the official [Font Awesome repository][fontawesome_repo] directly as a Hugo module, eliminating the need for npm dependencies. Font Awesome assets (SVG files, SCSS, and webfonts) are vendored automatically by Hugo's module system.
+
+**Key features:**
+- **No npm required**: All Font Awesome assets come from the official Git repository
+- **SVG-first approach**: Uses Font Awesome 7.x "full" SVGs (`svgs-full/`) to prevent icon clipping
+- **Symbol map support**: Generate reusable SVG symbols for optimal performance
+- **CI/CD compatible**: Works identically in development and production environments
+
+### Version Management
+
+Font Awesome changed its version tagging pattern after v4.x, breaking semantic versioning compatibility with Go modules (see [issue #17342][fa_isue_17342]). As a workaround, this module imports the `7.x` branch, which Go resolves to a pseudo-version in `go.mod`:
+
+```go
+require (
+  github.com/FortAwesome/Font-Awesome v0.0.0-20260210181720-337dd2045d56
+)
+```
+
+To update to the latest Font Awesome 7.x release:
+
+```bash
+hugo mod get -u github.com/FortAwesome/Font-Awesome@7.x
+hugo mod tidy
+hugo mod vendor
+```
+
+**Note**: The `@7.x` branch reference is needed in the `hugo mod get` command because Font Awesome uses non-standard version tags (e.g., "Release 7.0.0" instead of "v7.0.0").
 
 ## Contributing
 
@@ -78,6 +126,7 @@ This module uses [semantic-release][semantic-release] to automate the release of
 [hinode_docs]: https://gethinode.com
 [fa_isue_17342]: https://github.com/FortAwesome/Font-Awesome/issues/17342
 [fontawesome]: https://fontawesome.com
+[fontawesome_repo]: https://github.com/FortAwesome/Font-Awesome
 [hugo_discussion_41861]: https://discourse.gohugo.io/t/how-to-specify-the-version-of-third-parties-library/41861
 [mod-fontawesome]: https://github.com/gethinode/mod-fontawesome
 [repository]: https://github.com/gethinode/hinode.git
