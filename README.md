@@ -60,29 +60,25 @@ No npm installation required - all Font Awesome assets are automatically include
 ## Configuration
 
 > [!IMPORTANT]
-> Webfonts (`inline = false`) require Dart Sass to function correctly. See https://gohugo.io/functions/css/sass/#dart-sass for installation instructions.
+> Webfonts (`mode = "webfonts"`) require Dart Sass to function correctly. See https://gohugo.io/functions/css/sass/#dart-sass for installation instructions.
 
 This module supports the following parameters (see the section `params.modules` in `config.toml`):
 
-| Setting                 | Default | Description |
-|-------------------------|---------|-------------|
-| fontawesome.embed      | false   | If set, generates a symbol map with embedded vector images. Only works with inline SVG mode (`inline = true`). Icons are defined once in a hidden `<svg>` element and referenced via `<use>`, reducing HTML size when icons are reused. Requires including the partial `{{- partial "assets/symbols.html" . -}}` in your layout (requires the current page context).|
-| fontawesome.inline      | true    | If set, uses inline SVG mode by loading individual SVG files directly. If false, uses web fonts via CSS. SVG mode supports symbol maps (embed mode) and provides better rendering. Webfont mode is smaller but less flexible. |
-| fontawesome.debug       | false   | If set, prints debug information as comments in the generated HTML. |
-| fontawesome.skipMissing | false   | If set, displays a warning when an icon cannot be found instead of exiting with an error. |
+| Setting                 | Default   | Description |
+|-------------------------|-----------|-------------|
+| fontawesome.mode        | "symbols" | Icon rendering mode: `"symbols"` (static SVG sprites with `<use>` references), `"svg"` (inline SVG elements), or `"webfonts"` (CSS webfonts). Symbols mode offers the best performance. |
+| fontawesome.defaultFamily | "fas"   | Default icon family for shorthand notation (e.g., `{{< icon "user" >}}` uses this family). |
+| fontawesome.debug       | false     | If set, prints debug information to Hugo build output. |
+| fontawesome.skipMissing | false     | If set, displays a warning when an icon cannot be found instead of exiting with an error. |
 
 **Example configuration:**
 
 ```toml
 [params.modules.fontawesome]
-  inline = true  # Default to SVG mode
-
-  # Per-family overrides
-  [params.modules.fontawesome.renderMode]
-    fas = "svg"   # FontAwesome Solid uses SVG (explicit)
-    fa = "svg"    # FontAwesome Regular uses SVG (explicit)
-    fab = "font"  # FontAwesome Brands uses webfont (override)
-    bi = "font"   # Bootstrap Icons use webfont (override)
+  mode = "symbols"      # Use SVG symbols (recommended)
+  defaultFamily = "fas" # Default to Font Awesome Solid
+  debug = false
+  skipMissing = false
 ```
 
 ## Notes

@@ -1,48 +1,46 @@
 comment: >-
   Use the icon shortcode to quickly add a Font Awesome icon to your content. You
   can also use fa for regular icons, fab for brand icons, and fas for solid
-  icons. 
+  icons.
+
 arguments:
   icon:
     position: 0
+    comment: >-
+      Icon to include. You can use shorthand notation such as `fas sort` to
+      include a Font Awesome icon. The argument also supports files with an
+      `.svg` extension. Inline type definition overrides global for position support.
   src:
+    type: string
     optional: true
     release: v0.22.0
+    comment: >-
+      Source of the icon file. If set, loads the icon from this path instead
+      of using the icon name.
   inline-style:
   spacing:
     release: v0.21.0
   wrapper:
     release: v0.19.0
-  scale:
-    type: float64
-    optional: true
-    comment: >-
-      When set, applies a scale transformation to the SVG content. For example,
-      the scale value `1.15` increases the content size with 15%. You can
-      use this to remove any padding inherent to the SVG content. Only
-      applicable when using inline icons, it does not apply to webfonts.
-  # deprecated arguments
   class:
-    type: string
     optional: true
+    position: 1
     comment: >-
-      Family, name, and styling of the icon to display. The shortcode expects
-      the following format and order: `{family} {name} {style attributes}`.
-      The shortcode supports the default families of the free version of Font
-      Awesome, including shorthand notation: `fa-solid` (`fas`), `fa-regular`
-      (`fa`), `fa-brands` (`fab`). You can omit the `fa-` prefix of the icon
-      name. When using fhe shortcodes `fa.html`, `fab.html`, and `fas.html`,
-      you can omit the family name. Alternatively, you can reference a custom
-      family and icon stored in `assets/svgs/{family}/{icon}.svg`. 
-    group: shortcode
-    deprecated: v1.0.0
-    alternative: icon
+      Modifier classes for styling and animation (e.g., `fa-2x`, `fa-spin`,
+      `fa-beat`). Reintroduced in v2.0.0 after being deprecated in v1.0.0.
+      Previously used for full icon specification (family, name, styling); now
+      exclusively for modifier classes. When using family-specific shortcodes
+      with positional arguments, all arguments after the icon name are joined
+      as modifier classes.
+    release: v2.0.0
+  # deprecated arguments
   style:
     type: string
     optional: true
-    comment: >-
-      Custom style of the icon, e.g. `--fa-animation-duration: 2s;`. Please note
-      that Hinode disables inline styles by default, review the Content Security
-      Policy for more details.
     deprecated: v1.0.0
     alternative: inline-style
+  scale:
+    release: v0.24.0
+    deprecated: v2.0.0
+    comment: >-
+      Deprecated. This parameter is no longer used by the icon rendering engine.

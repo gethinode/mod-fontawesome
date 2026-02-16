@@ -148,6 +148,13 @@ Set in `params.modules.fontawesome` of your Hugo config:
   - `true`: Display warning when icon cannot be found
   - `false`: Exit with error when icon cannot be found
 
+- `defaultFamily` (string, default: "fas") - Default icon family to use when none is explicitly specified
+  - Enables shorthand notation: `{{< icon "user" >}}` instead of `{{< icon "fas user" >}}`
+  - Works with any icon library: "fas", "fi-rr", "bi", "mdi", etc.
+  - Explicit family prefixes always take precedence: `{{< icon "fab github" >}}` uses fab even if default is fas
+  - Particularly useful for sites primarily using one icon family (e.g., Flaticon sites can set to "fi-rr")
+  - When debug=true, shows which icons received the default family
+
 **Deprecated parameters (from v4.x):**
 - `inline` - Use `mode` instead. Previously: `inline=true` for SVG modes, `inline=false` for webfonts. Old configurations are automatically migrated.
 - `embed` - Use `mode` instead. Previously: `embed=true` for symbols, `embed=false` for SVG+JS runtime. Old configurations are automatically migrated.
