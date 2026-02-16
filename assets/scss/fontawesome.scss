@@ -1,21 +1,35 @@
-{{- $inline := site.Params.modules.fontawesome.inline -}}
-{{- $embed := site.Params.modules.fontawesome.embed -}}
+{{/* Determine mode from config, with fallback to legacy inline/embed parameters */}}
+{{- $globalMode := site.Params.modules.fontawesome.mode -}}
+{{- if not $globalMode -}}
+    {{/* Fallback to legacy inline/embed if mode not set in config */}}
+    {{- $inline := default true site.Params.modules.fontawesome.inline -}}
+    {{- $embed := default true site.Params.modules.fontawesome.embed -}}
+    {{- if not $inline -}}
+        {{- $globalMode = "webfonts" -}}
+    {{- else if not $embed -}}
+        {{- $globalMode = "svg" -}}
+    {{- else -}}
+        {{- $globalMode = "symbols" -}}
+    {{- end -}}
+{{- else -}}
+    {{- $globalMode = default "symbols" $globalMode -}}
+{{- end -}}
 
-{{ if not (and $inline (not $embed)) }}
+{{ if ne $globalMode "svg" }}
 // Load FontAwesome core utilities (sizing, animations, stacked, etc.)
 // This provides fa-2x, fa-3x, fa-spin, fa-rotate-90, etc.
 // NOT loaded in SVG+JS mode - FontAwesome JavaScript provides complete CSS
 @import "modules/fontawesome/fontawesome";
 {{ end }}
 
-{{ if not $inline }}
+{{ if eq $globalMode "webfonts" }}
 // Webfont mode - load font family CSS with @font-face rules for webfonts
 @import "modules/fontawesome/solid";
 @import "modules/fontawesome/regular";
 @import "modules/fontawesome/brands";
 {{ end }}
 
-{{ if not (and $inline (not $embed)) }}
+{{ if ne $globalMode "svg" }}
 // SVG icon styles - needed for SVG symbols mode and webfont mode (for custom SVG icons)
 // NOT loaded in SVG+JS mode - FontAwesome JavaScript provides its own CSS
 .svg-inline--fa,
@@ -48,7 +62,7 @@ svg.svg-inline--fa {
 }
 {{ end }}
 
-{{ if and $inline $embed }}
+{{ if eq $globalMode "symbols" }}
 // SVG symbols mode - additional rules for symbol references
 
 // Allow symbols and use elements to render outside viewBox
@@ -114,7 +128,7 @@ svg use {
         max-height: 100%;
     }
 
-    {{ if $inline }}
+    {{ if ne $globalMode "webfonts" }}
     // SVG mode - icon elements become SVG via FontAwesome JS
     .fa-wrapper > i {
         width: 100cqi;

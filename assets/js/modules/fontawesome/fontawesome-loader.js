@@ -1,14 +1,41 @@
 {{- /*
     FontAwesome Intelligent Loader
     Conditionally loads FontAwesome JavaScript only when in SVG+JS mode
+    - mode="svg": Load FontAwesome JS (SVG+JS runtime)
+    - mode="symbols": No JS needed (SVG symbols/sprites)
+    - mode="webfonts": No JS needed (webfonts via CSS)
+
+    Legacy support:
     - inline=true, embed=false: Load FontAwesome JS (SVG+JS runtime)
     - inline=true, embed=true: No JS needed (SVG symbols/sprites)
     - inline=false: No JS needed (webfonts via CSS)
     Copyright © 2024 - 2025 The Hinode Team / Mark Dumay. All rights reserved.
 */ -}}
 
-{{- if and site.Params.modules.fontawesome.inline (not site.Params.modules.fontawesome.embed) -}}
-    {{- /* SVG+JS mode (inline=true, embed=false) - load FontAwesome JavaScript library */ -}}
+{{- /* Determine rendering mode from global config */ -}}
+{{- $mode := site.Params.modules.fontawesome.mode -}}
+{{- if not $mode -}}
+    {{- /* Fallback to legacy inline/embed if mode not set in config */ -}}
+    {{- $inline := default true site.Params.modules.fontawesome.inline -}}
+    {{- $embed := default true site.Params.modules.fontawesome.embed -}}
+    {{- if not $inline -}}
+        {{- $mode = "webfonts" -}}
+    {{- else if not $embed -}}
+        {{- $mode = "svg" -}}
+    {{- else -}}
+        {{- $mode = "symbols" -}}
+    {{- end -}}
+{{- else -}}
+    {{- /* Validate mode parameter - must be one of: symbols, svg, webfonts */ -}}
+    {{- $validModes := slice "symbols" "svg" "webfonts" -}}
+    {{- if not (in $validModes $mode) -}}
+        {{- warnf "[mod-fontawesome] Invalid mode '%s'. Valid values are: symbols, svg, webfonts. Defaulting to 'symbols'." $mode -}}
+        {{- $mode = "symbols" -}}
+    {{- end -}}
+{{- end -}}
+
+{{- if eq $mode "svg" -}}
+    {{- /* SVG+JS mode - load FontAwesome JavaScript library */ -}}
     {{- $baseURL := urls.JoinPath site.BaseURL "js/fontawesome" -}}
 
     // FontAwesome SVG+JS runtime loader
@@ -38,6 +65,6 @@
         document.head.appendChild(brands);
     })();
 {{- else -}}
-    {{- /* SVG symbols mode (inline=true, embed=true) or Webfont mode (inline=false) - no JavaScript needed */ -}}
-    // FontAwesome rendering via {{ if site.Params.modules.fontawesome.inline }}SVG symbols{{ else }}webfonts (CSS){{ end }}
+    {{- /* SVG symbols mode or Webfont mode - no JavaScript needed */ -}}
+    // FontAwesome rendering via {{ if eq $mode "symbols" }}SVG symbols{{ else }}webfonts (CSS){{ end }}
 {{- end -}}
