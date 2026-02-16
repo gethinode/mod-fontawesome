@@ -36,7 +36,46 @@
 
 {{- $style := or $args.inlineStyle $args.style -}}
 {{- $output := "" -}}
-{{- $inline := site.Params.modules.fontawesome.inline -}}
+
+{{/* Generate deprecation warnings for global config - always warn if old parameters present */}}
+{{- $deprecationWarnings := slice -}}
+{{- if isset site.Params.modules.fontawesome "inline" -}}
+    {{- $deprecationWarnings = $deprecationWarnings | append "Configuration parameter 'inline' is deprecated in Hinode v2.0.0, remove it and use 'mode' instead" -}}
+{{- end -}}
+{{- if isset site.Params.modules.fontawesome "embed" -}}
+    {{- $deprecationWarnings = $deprecationWarnings | append "Configuration parameter 'embed' is deprecated in Hinode v2.0.0, remove it and use 'mode' instead" -}}
+{{- end -}}
+
+{{/* Output deprecation warnings - use warnf for visibility in terminal */}}
+{{- if $deprecationWarnings -}}
+    {{- range $deprecationWarnings -}}
+        {{- warnf "[mod-fontawesome] %s" . -}}
+    {{- end -}}
+{{- end -}}
+
+{{/* Determine rendering mode from global config */}}
+{{- $mode := site.Params.modules.fontawesome.mode -}}
+{{- if not $mode -}}
+    {{/* Fallback to legacy inline/embed if mode not set in config */}}
+    {{- $inline := default true site.Params.modules.fontawesome.inline -}}
+    {{- $embed := default true site.Params.modules.fontawesome.embed -}}
+
+    {{/* Map old parameters to new mode */}}
+    {{- if not $inline -}}
+        {{- $mode = "webfonts" -}}
+    {{- else if not $embed -}}
+        {{- $mode = "svg" -}}
+    {{- else -}}
+        {{- $mode = "symbols" -}}
+    {{- end -}}
+{{- else -}}
+    {{/* Validate mode parameter - must be one of: symbols, svg, webfonts */}}
+    {{- $validModes := slice "symbols" "svg" "webfonts" -}}
+    {{- if not (in $validModes $mode) -}}
+        {{- warnf "[mod-fontawesome] Invalid mode '%s'. Valid values are: symbols, svg, webfonts. Defaulting to 'symbols'." $mode -}}
+        {{- $mode = "symbols" -}}
+    {{- end -}}
+{{- end -}}
 
 {{- if not $error }}
     {{- if $style }}
@@ -57,14 +96,17 @@
         {{- if $svg -}}
             {{- $regex := printf `%s((?:.|\\n)*)%s` "<!--" "-->" -}}
             {{- $content := (replaceRE $regex "" $svg.Content) -}}
+            {{/* Strip XML declaration if present */}}
+            {{- $content = replaceRE `<\?xml[^>]*\?>` "" $content -}}
+            {{- $content = replaceRE `^\s+` "" $content -}}
             {{- $inject := (replaceRE "xmlns=\\\"(.*?)\\\"" (printf "class=\"svg-inline--fa %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $attr (or $style "")) $content) -}}
             {{/* Remove fixed width/height to allow CSS sizing (fa-2x, fa-3x, fa-4x, etc.) */}}
             {{- $inject = replaceRE "width=\\\"(.*?)\\\"" "" $inject -}}
             {{- $inject = replaceRE "height=\\\"(.*?)\\\"" "" $inject -}}
             {{- $output = $inject -}}
 
-            {{/* Handle embed mode - convert to symbol reference */}}
-            {{- if and (site.Params.modules.fontawesome.embed) (page) -}}
+            {{/* Handle symbols mode - convert to symbol reference */}}
+            {{- if and (eq $mode "symbols") (page) -}}
                 {{- $symbolId := printf "%s-%s" $family $name -}}
                 {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
                 {{/* Add overflow="visible" attribute to containing SVG */}}
@@ -72,12 +114,16 @@
                 {{- $output = printf `%s<use href="#%s"></use></svg>` $definition $symbolId -}}
 
                 {{/* Create symbol definition with overflow attribute */}}
-                {{- $entry := replaceRE "^<svg " (printf `<symbol id="%s" overflow="visible"` $symbolId) $content -}}
-                {{- $entry = replaceRE "</svg>$" "</symbol>" $entry -}}
-                {{- $entry = replaceRE "xmlns=\"(.*?)\"" "" $entry -}}
-                {{/* Remove width/height from symbol definition */}}
-                {{- $entry = replaceRE "width=\"(.*?)\"" "" $entry -}}
-                {{- $entry = replaceRE "height=\"(.*?)\"" "" $entry -}}
+                {{/* First extract viewBox for symbol */}}
+                {{- $viewBox := "" -}}
+                {{- with (findRE `viewBox="[^"]*"` $content 1) -}}
+                    {{- $viewBox = index . 0 -}}
+                {{- end -}}
+                {{/* Extract path content between svg tags */}}
+                {{- $pathContent := replaceRE `^<svg[^>]*>` "" $content -}}
+                {{- $pathContent = replaceRE `</svg>\s*$` "" $pathContent -}}
+                {{/* Build clean symbol */}}
+                {{- $entry := printf `<symbol id="%s" overflow="visible" %s>%s</symbol>` $symbolId $viewBox $pathContent -}}
                 {{- page.Scratch.Add "icons" (slice $entry) -}}
             {{- end -}}
         {{- end -}}
@@ -106,7 +152,7 @@
             {{/* FontAwesome animation classes: https://docs.fontawesome.com/web/style/animate/ */}}
             {{- $isAnimated := or (in $attr "fa-beat") (in $attr "fa-fade") (in $attr "fa-beat-fade") (in $attr "fa-bounce") (in $attr "fa-flip") (in $attr "fa-shake") (in $attr "fa-spin") (in $attr "fa-spin-pulse") (in $attr "fa-spin-reverse") (in $attr "fa-pulse") -}}
 
-            {{- if and $inline (site.Params.modules.fontawesome.embed) -}}
+            {{- if eq $mode "symbols" -}}
                 {{/* SVG symbols mode - load static SVG */}}
                 {{/* Animated/Stacked icons: use inline SVG (original viewBox for correct transforms/positioning) */}}
                 {{/* Static icons: use symbol references with overflow="visible" to prevent clipping */}}
@@ -126,6 +172,9 @@
                     {{/* Process SVG content */}}
                     {{- $regex := printf `%s((?:.|\\n)*)%s` "<!--" "-->" -}}
                     {{- $content := (replaceRE $regex "" $svg.Content) -}}
+                    {{/* Strip XML declaration if present */}}
+                    {{- $content = replaceRE `<\?xml[^>]*\?>` "" $content -}}
+                    {{- $content = replaceRE `^\s+` "" $content -}}
                     {{- $inject := (replaceRE "xmlns=\\\"(.*?)\\\"" (printf "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $family $name $attr (or $style "")) $content) -}}
                     {{/* Remove fixed width/height to allow CSS sizing (fa-2x, fa-3x, etc.) */}}
                     {{- $inject = replaceRE "width=\\\"(.*?)\\\"" "" $inject -}}
@@ -145,12 +194,16 @@
 
                         {{/* Create symbol definition with viewBox and overflow attribute */}}
                         {{/* Per FontAwesome docs: symbols need viewBox + overflow="visible" to prevent clipping */}}
-                        {{- $entry := replaceRE "^<svg " (printf `<symbol id="%s" overflow="visible"` $symbolId) $content -}}
-                        {{- $entry = replaceRE "</svg>$" "</symbol>" $entry -}}
-                        {{- $entry = replaceRE "xmlns=\"(.*?)\"" "" $entry -}}
-                        {{/* Remove width/height from symbol definition */}}
-                        {{- $entry = replaceRE "width=\"(.*?)\"" "" $entry -}}
-                        {{- $entry = replaceRE "height=\"(.*?)\"" "" $entry -}}
+                        {{/* First extract viewBox for symbol */}}
+                        {{- $viewBox := "" -}}
+                        {{- with (findRE `viewBox="[^"]*"` $content 1) -}}
+                            {{- $viewBox = index . 0 -}}
+                        {{- end -}}
+                        {{/* Extract path content between svg tags */}}
+                        {{- $pathContent := replaceRE `^<svg[^>]*>` "" $content -}}
+                        {{- $pathContent = replaceRE `</svg>\s*$` "" $pathContent -}}
+                        {{/* Build clean symbol */}}
+                        {{- $entry := printf `<symbol id="%s" overflow="visible" %s>%s</symbol>` $symbolId $viewBox $pathContent -}}
                         {{- page.Scratch.Add "icons" (slice $entry) -}}
                     {{- else -}}
                         {{/* Fallback to inline SVG if no page context */}}
@@ -167,7 +220,7 @@
             {{/* Other icon families (Bootstrap Icons, Material Design Icons, etc.) */}}
             {{- $name = index $icon_class 1 -}}
 
-            {{- if $inline -}}
+            {{- if ne $mode "webfonts" -}}
                 {{/* SVG mode - load static SVG for non-FontAwesome icons */}}
                 {{- $path := printf "svgs/%s/%s.svg" $family $name -}}
                 {{- $svg := resources.Get $path -}}
@@ -184,6 +237,9 @@
                     {{/* Process SVG content */}}
                     {{- $regex := printf `%s((?:.|\\n)*)%s` "<!--" "-->" -}}
                     {{- $content := (replaceRE $regex "" $svg.Content) -}}
+                    {{/* Strip XML declaration if present */}}
+                    {{- $content = replaceRE `<\?xml[^>]*\?>` "" $content -}}
+                    {{- $content = replaceRE `^\s+` "" $content -}}
                     {{/* Clean up original SVG attributes to prevent duplicates */}}
                     {{- $content = replaceRE "xmlns=\\\"(.*?)\\\"" "" $content -}}
                     {{- $content = replaceRE "class=\\\"(.*?)\\\"" "" $content -}}
@@ -194,8 +250,8 @@
                     {{- $inject := (replaceRE "^<svg " (printf "<svg class=\"svg-inline--fa %s %s-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s " $family $family $name $attr (or $style "")) $content) -}}
                     {{- $output = $inject -}}
 
-                    {{/* Handle embed mode - convert to symbol reference */}}
-                    {{- if and (site.Params.modules.fontawesome.embed) (page) -}}
+                    {{/* Handle symbols mode - convert to symbol reference */}}
+                    {{- if and (eq $mode "symbols") (page) -}}
                         {{- $symbolId := printf "%s-%s" $family $name -}}
                         {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
                         {{/* Add overflow="visible" attribute to containing SVG */}}
@@ -203,12 +259,16 @@
                         {{- $output = printf `%s<use href="#%s"></use></svg>` $definition $symbolId -}}
 
                         {{/* Create symbol definition with overflow attribute */}}
-                        {{- $entry := replaceRE "^<svg " (printf `<symbol id="%s" overflow="visible"` $symbolId) $content -}}
-                        {{- $entry = replaceRE "</svg>$" "</symbol>" $entry -}}
-                        {{- $entry = replaceRE "xmlns=\"(.*?)\"" "" $entry -}}
-                        {{/* Remove width/height from symbol definition */}}
-                        {{- $entry = replaceRE "width=\"(.*?)\"" "" $entry -}}
-                        {{- $entry = replaceRE "height=\"(.*?)\"" "" $entry -}}
+                        {{/* First extract viewBox for symbol */}}
+                        {{- $viewBox := "" -}}
+                        {{- with (findRE `viewBox="[^"]*"` $content 1) -}}
+                            {{- $viewBox = index . 0 -}}
+                        {{- end -}}
+                        {{/* Extract path content between svg tags */}}
+                        {{- $pathContent := replaceRE `^<svg[^>]*>` "" $content -}}
+                        {{- $pathContent = replaceRE `</svg>\s*$` "" $pathContent -}}
+                        {{/* Build clean symbol */}}
+                        {{- $entry := printf `<symbol id="%s" overflow="visible" %s>%s</symbol>` $symbolId $viewBox $pathContent -}}
                         {{- page.Scratch.Add "icons" (slice $entry) -}}
                     {{- end -}}
                 {{- end -}}

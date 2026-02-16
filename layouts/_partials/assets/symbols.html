@@ -1,4 +1,46 @@
-{{- if site.Params.modules.fontawesome.embed -}}
+{{/* Generate deprecation warnings - always warn if old parameters present */}}
+{{- $deprecationWarnings := slice -}}
+{{- if isset site.Params.modules.fontawesome "inline" -}}
+    {{- $deprecationWarnings = $deprecationWarnings | append "Configuration parameter 'inline' is deprecated in Hinode v2.0.0, remove it and use 'mode' instead" -}}
+{{- end -}}
+{{- if isset site.Params.modules.fontawesome "embed" -}}
+    {{- $deprecationWarnings = $deprecationWarnings | append "Configuration parameter 'embed' is deprecated in Hinode v2.0.0, remove it and use 'mode' instead" -}}
+{{- end -}}
+
+{{/* Output deprecation warnings - use warnf for visibility in terminal */}}
+{{- if $deprecationWarnings -}}
+    {{- range $deprecationWarnings -}}
+        {{- warnf "[mod-fontawesome] %s" . -}}
+    {{- end -}}
+{{- end -}}
+
+{{/* Determine mode from config, with fallback to legacy inline/embed parameters */}}
+{{- $globalMode := site.Params.modules.fontawesome.mode -}}
+{{- if not $globalMode -}}
+    {{/* Fallback to legacy inline/embed if mode not set in config */}}
+    {{- $inline := default true site.Params.modules.fontawesome.inline -}}
+    {{- $embed := default true site.Params.modules.fontawesome.embed -}}
+
+    {{/* Determine mode from legacy parameters */}}
+    {{- if $inline -}}
+        {{- if $embed -}}
+            {{- $globalMode = "symbols" -}}
+        {{- else -}}
+            {{- $globalMode = "svg" -}}
+        {{- end -}}
+    {{- else -}}
+        {{- $globalMode = "webfonts" -}}
+    {{- end -}}
+{{- else -}}
+    {{/* Validate mode parameter - must be one of: symbols, svg, webfonts */}}
+    {{- $validModes := slice "symbols" "svg" "webfonts" -}}
+    {{- if not (in $validModes $globalMode) -}}
+        {{- warnf "[mod-fontawesome] Invalid mode '%s'. Valid values are: symbols, svg, webfonts. Defaulting to 'symbols'." $globalMode -}}
+        {{- $globalMode = "symbols" -}}
+    {{- end -}}
+{{- end -}}
+
+{{- if eq $globalMode "symbols" -}}
     {{- if and site.Params.modules.fontawesome.debug -}}
         {{- printf "<!-- SVG symbol map -->" | safeHTML }}
     {{ end -}}

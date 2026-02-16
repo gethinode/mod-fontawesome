@@ -5,7 +5,7 @@ comment: >-
 arguments:
   icon:
     position: 0
-  src: 
+  src:
     optional: true
     release: v0.22.0
   inline-style:

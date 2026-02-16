@@ -7,26 +7,67 @@
   {{ partial "head/stylesheet.html" -}}
 </head>
 <body>
+  {{/* Show deprecation notice if using old config - always warn if old parameters present */}}
+  {{- if or (isset site.Params.modules.fontawesome "inline") (isset site.Params.modules.fontawesome "embed") -}}
+    <div style="background: #fff3cd; padding: 15px; margin: 20px 0; border-left: 4px solid #ffc107; font-family: monospace;">
+      <strong>⚠️ Deprecation Warning</strong>
+      <p style="margin: 10px 0;">
+        You are using deprecated configuration parameters (<code>inline</code> and/or <code>embed</code>).
+        <br>Please remove them from your configuration.
+        {{- if site.Params.modules.fontawesome.mode -}}
+        <br><strong>Note:</strong> The <code>mode</code> parameter is already set, so the old parameters are being ignored.
+        {{- else -}}
+        <br>The recommended <code>mode</code> value based on your current settings:
+      </p>
+      <pre style="background: #f5f5f5; padding: 10px; margin: 10px 0;">mode = "{{ cond (not (default true site.Params.modules.fontawesome.inline)) "webfonts" (cond (not (default true site.Params.modules.fontawesome.embed)) "svg" "symbols") }}"</pre>
+      <p style="margin: 10px 0;">
+        {{- end -}}
+      </p>
+      <p style="margin: 10px 0; font-size: 12px; color: #666;">
+        See <a href="https://github.com/gethinode/mod-fontawesome" style="color: #0066cc;">documentation</a> for migration guide.
+      </p>
+    </div>
+  {{- end -}}
+
   <div style="background: #f5f5f5; padding: 20px; margin: 20px 0; border-left: 4px solid #0066cc; font-family: monospace;">
     <h3 style="margin-top: 0; font-size: 18px;">⚙️ Configuration (v4)</h3>
 
     <strong>Global Settings:</strong>
     <ul style="margin: 10px 0;">
-      <li><code>inline</code> = <strong>{{ site.Params.modules.fontawesome.inline }}</strong> ({{ if site.Params.modules.fontawesome.inline }}SVG+JS mode{{ else }}Webfont mode{{ end }})</li>
-      <li><code>embed</code> = {{ site.Params.modules.fontawesome.embed | default false }} ({{ if site.Params.modules.fontawesome.embed }}symbol maps enabled{{ else }}inline SVG{{ end }})</li>
+      {{- $globalMode := site.Params.modules.fontawesome.mode -}}
+      {{- $configuredMode := $globalMode -}}
+      {{- $modeInvalid := false -}}
+      {{- if not $globalMode -}}
+        {{- $inline := default true site.Params.modules.fontawesome.inline -}}
+        {{- $embed := default true site.Params.modules.fontawesome.embed -}}
+        {{- if not $inline -}}
+          {{- $globalMode = "webfonts" -}}
+        {{- else if not $embed -}}
+          {{- $globalMode = "svg" -}}
+        {{- else -}}
+          {{- $globalMode = "symbols" -}}
+        {{- end -}}
+      {{- else -}}
+        {{- /* Validate mode parameter */ -}}
+        {{- $validModes := slice "symbols" "svg" "webfonts" -}}
+        {{- if not (in $validModes $globalMode) -}}
+          {{- $modeInvalid = true -}}
+          {{- $globalMode = "symbols" -}}
+        {{- end -}}
+      {{- end -}}
+      <li><code>mode</code> = <strong>{{ $globalMode }}</strong>{{ if $modeInvalid }} <span style="color: #dc3545;">(invalid: "{{ $configuredMode }}", defaulted to "symbols")</span>{{ end }}</li>
       <li><code>debug</code> = {{ site.Params.modules.fontawesome.debug }}</li>
       <li><code>skipMissing</code> = {{ site.Params.modules.fontawesome.skipMissing }}</li>
-      {{ with site.Params.modules.fontawesome.styles -}}
-      <li><code>styles</code> = {{ . }} (loaded JS icon sets)</li>
-      {{ end }}
     </ul>
 
     <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
       <strong>📊 Rendering Mode:</strong>
       <p style="margin: 10px 0;">
-        {{- if site.Params.modules.fontawesome.inline -}}
+        {{- if eq $globalMode "symbols" -}}
+        <strong style="color: #0066cc;">SVG Symbols Mode</strong> - Static SVG with symbol references (no JavaScript)
+        {{- else if eq $globalMode "svg" -}}
         <strong style="color: #0066cc;">SVG+JS Mode</strong> - FontAwesome JavaScript converts <code>&lt;i&gt;</code> tags to SVG at runtime
-        {{- else -}}
+        {{- else if eq $globalMode "webfonts" -}}
         <strong style="color: #0066cc;">Webfont Mode</strong> - Icons rendered as webfonts via CSS
         {{- end -}}
       </p>

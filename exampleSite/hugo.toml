@@ -9,8 +9,7 @@ unsafe = true
 block = true
 
 [params.modules.fontawesome]
-  inline = true
-  embed = true
+  mode = "symbols"    # Rendering mode: "symbols" | "svg" | "webfonts"
   debug = true
   skipMissing = false
 
