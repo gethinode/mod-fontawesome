@@ -9,9 +9,10 @@ unsafe = true
 block = true
 
 [params.modules.fontawesome]
-  mode = "symbols"    # Rendering mode: "symbols" | "svg" | "webfonts"
-  debug = true
+  mode = "symbols"       # Rendering mode: "symbols" | "svg" | "webfonts"
+  debug = true           # Enable to see default family application in console
   skipMissing = false
+  defaultFamily = "fas"  # Test with FontAwesome Solid
 
 [module]
   # Build and serve using local mod-fontawesome clone declared in the named Hugo workspace:

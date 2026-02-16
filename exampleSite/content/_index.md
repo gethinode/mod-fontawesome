@@ -4,6 +4,34 @@ description: Site to test Font Awesome module.
 date: 2023-08-02
 ---
 
+## Default Icon Family Tests
+
+**Config:** `defaultFamily = "fas"` (see hugo.toml)
+
+### Shorthand Notation (using default family)
+These icons use only the icon name, so they should get the default "fas" family:
+
+{{< icon "user" >}}
+{{< icon "heart" >}}
+{{< icon "star" >}}
+{{< icon "home" >}}
+
+### Explicit Family (overrides default)
+These icons specify a family prefix, so they should use the explicit family:
+
+{{< icon "far heart" >}} (FontAwesome Regular)
+{{< icon "fab github" >}} (FontAwesome Brands)
+{{< icon "fas coffee fa-3x" >}} (FontAwesome Solid - explicit)
+
+### Using Family-Specific Shortcodes
+These use the traditional shortcodes and should work unchanged:
+
+{{< fas "thumbs-up" >}}
+{{< far "thumbs-up" >}}
+{{< fab "twitter" >}}
+
+---
+
 ## Recently added icons
 
 {{< fas code-compare fa-4x >}}

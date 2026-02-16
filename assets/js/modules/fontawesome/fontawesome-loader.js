@@ -9,7 +9,7 @@
     - inline=true, embed=false: Load FontAwesome JS (SVG+JS runtime)
     - inline=true, embed=true: No JS needed (SVG symbols/sprites)
     - inline=false: No JS needed (webfonts via CSS)
-    Copyright © 2024 - 2025 The Hinode Team / Mark Dumay. All rights reserved.
+    Copyright © 2024 - 2026 The Hinode Team / Mark Dumay. All rights reserved.
 */ -}}
 
 {{- /* Determine rendering mode from global config */ -}}

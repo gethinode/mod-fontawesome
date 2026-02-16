@@ -1,16 +1,16 @@
-{{/* 
-    Copyright © 2024 - 2025 The Hinode Team / Mark Dumay. All rights reserved.
+{{/*
+    Copyright © 2024 - 2026 The Hinode Team / Mark Dumay. All rights reserved.
     Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
     Visit gethinode.com/license for more details.
 */}}
 
 {{- $error := false -}}
 
-{{/* Validate and initialize arguments */}}
+{{/* Validate and initialize arguments using icon structure */}}
 {{ $args := partial "utilities/InitArgs.html" (dict "structure" "icon" "args" .Params "named" .IsNamedParams "group" "shortcode") }}
 {{ if or $args.err $args.warnmsg }}
-    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
-        "partial"  "shortcodes/fa.html" 
+    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict
+        "partial"  "shortcodes/fa.html"
         "warnid"   "warn-invalid-arguments"
         "msg"      "Invalid arguments"
         "details"  ($args.errmsg | append $args.warnmsg)
@@ -19,15 +19,28 @@
     )}}
 {{ end }}
 
-<!-- Initialize arguments -->
-{{- $icon := cond .IsNamedParams (or $args.icon $args.class) (delimit .Params " ") -}}
+<!-- Build icon string with family prefix -->
+{{- $icon := $args.icon -}}
+{{- $class := $args.class -}}
+
+{{/* For positional args with 2+ args, join all args after icon as modifiers */}}
+{{- if and (not .IsNamedParams) (ge (len .Params) 2) -}}
+    {{- $class = delimit (after 1 .Params) " " -}}
+{{- end -}}
+
+{{- $fullIcon := "" -}}
+
+{{- if and $icon $class -}}
+    {{- $fullIcon = printf "far %s %s" $icon $class -}}
+{{- else if $icon -}}
+    {{- $fullIcon = printf "far %s" $icon -}}
+{{- end -}}
+
 {{- $spacing := $args.spacing | default (not (in (split $args.wrapper " ") "fa-li")) -}}
-{{- if not $icon -}}
-    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
-        "partial"  "shortcodes/fa.html" 
-        "warnid"   "warn-invalid-arguments"
-        "msg"      "Invalid arguments"
-        "details"  (slice "Expected icon name")
+{{- if not $fullIcon -}}
+    {{ partial "utilities/LogErr.html" (dict
+        "partial"  "shortcodes/fa.html"
+        "msg"      "Missing icon name"
         "file"     page.File
         "position" .Position
     )}}
@@ -37,7 +50,7 @@
 <!-- Main code -->
 {{- if not $error -}}
     {{- partial "assets/icon.html" (dict
-        "icon"         (printf "far %s" $icon)
+        "icon"         $fullIcon
         "inline-style" (or $args.inlineStyle $args.style)
         "wrapper"      $args.wrapper
         "spacing"      $spacing

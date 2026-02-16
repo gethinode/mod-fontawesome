@@ -1,5 +1,5 @@
-{{/* 
-    Copyright © 2024 - 2025 The Hinode Team / Mark Dumay. All rights reserved.
+{{/*
+    Copyright © 2024 - 2026 The Hinode Team / Mark Dumay. All rights reserved.
     Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
     Visit gethinode.com/license for more details.
 */}}
@@ -9,8 +9,8 @@
 {{/* Validate and initialize arguments */}}
 {{ $args := partial "utilities/InitArgs.html" (dict "structure" "icon" "args" .Params "named" .IsNamedParams "group" "shortcode") }}
 {{ if or $args.err $args.warnmsg }}
-    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
-        "partial"  "shortcodes/icon.html" 
+    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict
+        "partial"  "shortcodes/icon.html"
         "warnid"   "warn-invalid-arguments"
         "msg"      "Invalid arguments"
         "details"  ($args.errmsg | append $args.warnmsg)
@@ -19,15 +19,55 @@
     )}}
 {{ end }}
 
-<!-- Initialize arguments -->
-{{- $icon := cond .IsNamedParams (or $args.icon $args.class) (delimit .Params " ") -}}
+<!-- Smart positional argument parsing for generic icon shortcode -->
+{{- $icon := $args.icon -}}
+{{- $class := $args.class -}}
+{{- $fullIcon := $icon -}}
+
+{{/* Handle 3+ positional args: family + icon + modifiers */}}
+{{- if and (not .IsNamedParams) (ge (len .Params) 3) -}}
+    {{/* 3+ args: arg[0]=family, arg[1]=icon, arg[2+]=modifiers */}}
+    {{- $family := index .Params 0 -}}
+    {{- $iconName := index .Params 1 -}}
+    {{- $modifiers := delimit (after 2 .Params) " " -}}
+    {{- $fullIcon = printf "%s %s %s" $family $iconName $modifiers -}}
+    {{- if site.Params.modules.fontawesome.debug -}}
+        {{- warnf "[icon shortcode] 3+ args: family='%s', icon='%s', modifiers='%s'" $family $iconName $modifiers -}}
+    {{- end -}}
+
+{{/* Handle 2 positional args: family + icon (no modifiers) */}}
+{{- else if and (not .IsNamedParams) (eq (len .Params) 2) (not $args.src) -}}
+    {{/* 2 args: arg[0]=family, arg[1]=icon */}}
+    {{- $family := index .Params 0 -}}
+    {{- $iconName := index .Params 1 -}}
+    {{- $fullIcon = printf "%s %s" $family $iconName -}}
+    {{- if site.Params.modules.fontawesome.debug -}}
+        {{- warnf "[icon shortcode] 2 args: family='%s', icon='%s'" $family $iconName -}}
+    {{- end -}}
+
+{{/* Apply default family to single-token icons (skip if src is provided) */}}
+{{- else if and $icon (not $args.src) -}}
+    {{- $icon_tokens := split $icon " " -}}
+    {{- if eq (len $icon_tokens) 1 -}}
+        {{- $defaultFamily := site.Params.modules.fontawesome.defaultFamily | default "fas" -}}
+        {{- $fullIcon = printf "%s %s" $defaultFamily $icon -}}
+        {{- if site.Params.modules.fontawesome.debug -}}
+            {{- warnf "[icon shortcode] Applied default family '%s' to icon '%s'" $defaultFamily $fullIcon -}}
+        {{- end -}}
+    {{- else if ge (len $icon_tokens) 2 -}}
+        {{/* Icon already has family prefix in named params */}}
+        {{- $firstToken := index $icon_tokens 0 -}}
+        {{- if site.Params.modules.fontawesome.debug -}}
+            {{- warnf "[icon shortcode] Using explicit family '%s' for icon '%s'" $firstToken $fullIcon -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
 {{- $spacing := $args.spacing | default (not (in (split $args.wrapper " ") "fa-li")) -}}
-{{- if and (not $icon) (not $args.src) -}}
-    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
-        "partial"  "shortcodes/icon.html" 
-        "warnid"   "warn-invalid-arguments"
-        "msg"      "Invalid arguments"
-        "details"  (slice "Expected icon name")
+{{- if and (not $fullIcon) (not $args.src) -}}
+    {{ partial "utilities/LogErr.html" (dict
+        "partial"  "shortcodes/icon.html"
+        "msg"      "Missing icon name"
         "file"     page.File
         "position" .Position
     )}}
@@ -37,7 +77,7 @@
 <!-- Main code -->
 {{- if not $error -}}
     {{- partial "assets/icon.html" (dict
-        "icon"         $icon
+        "icon"         $fullIcon
         "src"          $args.src
         "inline-style" (or $args.inlineStyle $args.style)
         "wrapper"      $args.wrapper

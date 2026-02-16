@@ -56,7 +56,6 @@
 [params.modules.fontawesome]
   integration = "core"
   mode = "symbols"       # Rendering mode: "symbols" (static SVG), "svg" (FontAwesome JS), "webfonts" (CSS)
-  # inline = true        # Deprecated: use 'mode' instead. Use SVG mode (true) or webfonts (false)
-  # embed = true         # Deprecated: use 'mode' instead. Use SVG symbol sprites for efficient reuse
   debug = false          # Show original markup as comments (FontAwesome icons only)
   skipMissing = false    # Warn vs. error on missing icons
+  defaultFamily = "fas"  # Default icon family when none specified (e.g., "fas", "fi-rr", "bi")

@@ -1,5 +1,5 @@
 {{/*
-    Copyright © 2024 - 2025 The Hinode Team / Mark Dumay. All rights reserved.
+    Copyright © 2024 - 2026 The Hinode Team / Mark Dumay. All rights reserved.
     Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
     Visit gethinode.com/license for more details.
 */}}
@@ -130,6 +130,21 @@
     {{- else -}}
         {{/* Parse icon family and name */}}
         {{- $icon_class := split $icon " " -}}
+        {{- $tokenCount := len $icon_class -}}
+
+        {{/* Apply default family if no family prefix provided */}}
+        {{- if eq $tokenCount 1 -}}
+            {{/* Single token means icon name only, prepend default family */}}
+            {{- $defaultFamily := site.Params.modules.fontawesome.defaultFamily | default "fas" -}}
+            {{- $icon = printf "%s %s" $defaultFamily $icon -}}
+            {{- $icon_class = split $icon " " -}}
+
+            {{/* Optional debug output */}}
+            {{- if site.Params.modules.fontawesome.debug -}}
+                {{- warnf "[mod-fontawesome] Applied default family '%s' to icon '%s'" $defaultFamily $icon -}}
+            {{- end -}}
+        {{- end -}}
+
         {{- $family = (index $icon_class 0) -}}
         {{- $attr = delimit (after 2 $icon_class) " " -}}
 
