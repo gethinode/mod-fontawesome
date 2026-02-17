@@ -288,6 +288,8 @@
                     {{- $content = replaceRE "fill=\\\"(.*?)\\\"" "" $content -}}
                     {{- $content = replaceRE "width=\\\"(.*?)\\\"" "" $content -}}
                     {{- $content = replaceRE "height=\\\"(.*?)\\\"" "" $content -}}
+                    {{/* Remove id attribute to prevent duplicate IDs (e.g. id="Outline" in Flaticon SVGs) */}}
+                    {{- $content = replaceRE " id=\\\"(.*?)\\\"" "" $content -}}
                     {{/* Inject our clean attributes */}}
                     {{- $inject := (replaceRE "^<svg " (printf "<svg class=\"svg-inline--fa %s %s-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s " $family $family $name $attr (or $style "")) $content) -}}
                     {{- $output = $inject -}}
