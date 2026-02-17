@@ -89,7 +89,7 @@ This module imports the official [Font Awesome repository][fontawesome_repo] dir
 
 **Key features:**
 - **No npm required**: All Font Awesome assets come from the official Git repository
-- **SVG-first approach**: Uses Font Awesome 7.x "full" SVGs (`svgs-full/`) to prevent icon clipping
+- **SVG-first approach**: Uses Font Awesome 7.x SVGs (`svgs/`) with `overflow="visible"` to prevent icon clipping
 - **Symbol map support**: Generate reusable SVG symbols for optimal performance
 - **CI/CD compatible**: Works identically in development and production environments
 

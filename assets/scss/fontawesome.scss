@@ -15,12 +15,9 @@
     {{- $globalMode = default "symbols" $globalMode -}}
 {{- end -}}
 
-{{ if ne $globalMode "svg" }}
 // Load FontAwesome core utilities (sizing, animations, stacked, etc.)
 // This provides fa-2x, fa-3x, fa-spin, fa-rotate-90, etc.
-// NOT loaded in SVG+JS mode - FontAwesome JavaScript provides complete CSS
 @import "modules/fontawesome/fontawesome";
-{{ end }}
 
 {{ if eq $globalMode "webfonts" }}
 // Webfont mode - load font family CSS with @font-face rules for webfonts
@@ -29,9 +26,7 @@
 @import "modules/fontawesome/brands";
 {{ end }}
 
-{{ if ne $globalMode "svg" }}
-// SVG icon styles - needed for SVG symbols mode and webfont mode (for custom SVG icons)
-// NOT loaded in SVG+JS mode - FontAwesome JavaScript provides its own CSS
+// SVG icon styles - needed for all modes (symbols, svg, and webfont for custom SVGs)
 .svg-inline--fa,
 svg.svg-inline--fa {
   overflow: visible;
@@ -60,10 +55,9 @@ svg.svg-inline--fa {
 .svg-inline--fa.fa-2xl {
   vertical-align: -0.3125em;
 }
-{{ end }}
 
-{{ if eq $globalMode "symbols" }}
-// SVG symbols mode - additional rules for symbol references
+{{ if ne $globalMode "webfonts" }}
+// SVG modes - additional rules for SVG symbol and use elements
 
 // Allow symbols and use elements to render outside viewBox
 svg symbol,
@@ -128,18 +122,8 @@ svg use {
         max-height: 100%;
     }
 
-    {{ if ne $globalMode "webfonts" }}
-    // SVG mode - icon elements become SVG via FontAwesome JS
-    .fa-wrapper > i {
-        width: 100cqi;
-        height: 100cqi;
-        max-width: 100%;
-        max-height: 100%;
-    }
-    {{ else }}
     // Webfont mode - font icons respond to font-size
     .fa-wrapper > i {
         font-size: 100cqi;
     }
-    {{ end }}
 }
