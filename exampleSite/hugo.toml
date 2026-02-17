@@ -9,7 +9,7 @@ unsafe = true
 block = true
 
 [params.modules.fontawesome]
-  mode = "symbols"       # Rendering mode: "symbols" | "svg" | "webfonts"
+  mode = "svg"       # Rendering mode: "symbols" | "svg" | "webfonts"
   debug = true           # Enable to see default family application in console
   skipMissing = false
   defaultFamily = "fas"  # Test with FontAwesome Solid

@@ -66,7 +66,7 @@ The module supports three rendering modes controlled by the `mode` parameter:
 - No JavaScript required - pure static SVG, no `<symbol>/<use>` indirection
 - No layout partial required
 - Best for: When you want inline SVG without the symbol map overhead
-- Animated icons (fa-spin, fa-beat, etc.) and stacked icons work natively via CSS transforms
+- Animated icons (fa-spin, fa-beat, etc.) and stacked icons work natively via CSS transforms on the outer SVG element
 
 **3. Webfont Mode (mode="webfonts"):**
 - Uses FontAwesome webfonts rendered via CSS
@@ -198,7 +198,6 @@ All shortcodes delegate to the core `icon.html` partial:
      - Creates symbol reference: `<svg overflow="visible" viewBox="..."><use href="#fas-heart"></use></svg>`
      - Adds `overflow="visible"` attribute to prevent clipping of FA v7 icons with negative coordinates
      - Stores symbol definition (with `overflow="visible"`) in page.Scratch for output via `symbols.html` partial
-     - Animated icons (fa-spin, fa-beat, etc.) use inline SVG instead (no symbols)
    - **SVG inline mode (`mode="svg"`):**
      - Loads static SVG from `assets/svgs/fa/{family}/{name}.svg`
      - Outputs directly as `<svg overflow="visible" class="svg-inline--fa fas fa-heart ..."><path .../></svg>`
@@ -225,7 +224,7 @@ All shortcodes delegate to the core `icon.html` partial:
 - Uses original viewBox from FontAwesome (no adjustments)
 - Adds `overflow="visible"` SVG attribute to prevent clipping of FA v7 icons with negative coordinates
 - Removes fixed width/height attributes to allow CSS sizing utilities (fa-2x, fa-3x, etc.)
-- **Symbols mode additionally:** Creates reusable symbol definitions stored in page.Scratch; animated icons (fa-spin, fa-beat, etc.) use inline SVG instead of symbols (for correct transform behavior)
+- **Symbols mode additionally:** Creates reusable symbol definitions stored in page.Scratch; all icons including animated (fa-spin, fa-beat, etc.) and stacked icons use symbol references
 - Symbol definitions output via `{{- partial "assets/symbols.html" . -}}` partial
 
 **CSS Loading:**
