@@ -42,7 +42,7 @@ This module is imported automatically when using Hinode. To use it in your own H
    ```toml
    [module]
      [[module.imports]]
-       path = "github.com/gethinode/mod-fontawesome/v4"
+       path = "github.com/gethinode/mod-fontawesome/v5"
    ```
 
 2. **Vendor the module (optional but recommended):**

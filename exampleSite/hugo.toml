@@ -18,4 +18,4 @@ block = true
   # Build and serve using local mod-fontawesome clone declared in the named Hugo workspace:
   workspace = "mod-fontawesome.work"
   [[module.imports]]
-    path = "github.com/gethinode/mod-fontawesome/v4"
+    path = "github.com/gethinode/mod-fontawesome/v5"

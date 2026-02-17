@@ -1,4 +1,4 @@
-module github.com/gethinode/mod-fontawesome/v4
+module github.com/gethinode/mod-fontawesome/v5
 
 go 1.19
 
