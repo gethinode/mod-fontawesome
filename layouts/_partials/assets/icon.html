@@ -160,17 +160,9 @@
             {{- $name = index $icon_class 1 -}}
             {{- $name = strings.TrimPrefix "fa-" $name -}}
 
-            {{/* Check if this is a stacked icon (fa-stack-1x or fa-stack-2x) */}}
-            {{- $isStacked := or (in $attr "fa-stack-1x") (in $attr "fa-stack-2x") -}}
-
-            {{/* Check if this is an animated icon (animations don't work well with adjusted viewBox) */}}
-            {{/* FontAwesome animation classes: https://docs.fontawesome.com/web/style/animate/ */}}
-            {{- $isAnimated := or (in $attr "fa-beat") (in $attr "fa-fade") (in $attr "fa-beat-fade") (in $attr "fa-bounce") (in $attr "fa-flip") (in $attr "fa-shake") (in $attr "fa-spin") (in $attr "fa-spin-pulse") (in $attr "fa-spin-reverse") (in $attr "fa-pulse") -}}
-
             {{- if eq $mode "symbols" -}}
                 {{/* SVG symbols mode - load static SVG */}}
-                {{/* Animated/Stacked icons: use inline SVG (original viewBox for correct transforms/positioning) */}}
-                {{/* Static icons: use symbol references with overflow="visible" to prevent clipping */}}
+                {{/* All icons use symbol references with overflow="visible" to prevent clipping */}}
                 {{- $faFamily := cond (eq $family "fas") "solid" (cond (eq $family "far") "regular" (cond (eq $family "fab") "brands" "solid")) -}}
                 {{- $path := printf "svgs/fa/%s/%s.svg" $faFamily $name -}}
                 {{- $svg := resources.Get $path -}}
@@ -195,10 +187,7 @@
                     {{- $inject = replaceRE "width=\\\"(.*?)\\\"" "" $inject -}}
                     {{- $inject = replaceRE "height=\\\"(.*?)\\\"" "" $inject -}}
 
-                    {{- if or $isAnimated $isStacked -}}
-                        {{/* Animated/Stacked icons: use inline SVG with original viewBox for correct transforms/positioning */}}
-                        {{- $output = $inject -}}
-                    {{- else if page -}}
+                    {{- if page -}}
                         {{/* Static icons: create symbol reference with viewBox and overflow */}}
                         {{/* Per FontAwesome docs: add overflow="visible" to prevent clipping */}}
                         {{- $symbolId := printf "%s-%s" $family $name -}}
