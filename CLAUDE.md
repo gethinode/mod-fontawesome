@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a Hugo module that provides Font Awesome icon integration for Hinode sites. The module imports FontAwesome directly from the official Git repository as a Hugo module (no npm dependencies). It supports three rendering modes: SVG symbols (static), SVG+JS (runtime), and webfonts.
+This is a Hugo module that provides Font Awesome icon integration for Hinode sites. The module imports FontAwesome directly from the official Git repository as a Hugo module (no npm dependencies). It supports three rendering modes: SVG symbols (static), SVG inline (build-time), and webfonts.
 
 **Version 4.x Architecture:** This module imports Font Awesome as a Hugo module from `github.com/FortAwesome/Font-Awesome`, eliminating npm dependencies. All assets are vendored through Hugo's module system. No dist/ folder or build scripts needed.
 
@@ -49,9 +49,9 @@ npx git-cz              # Prepare commit message (enforces Conventional Commits)
 
 ### Rendering Modes
 
-The module supports three rendering modes controlled by `inline` and `embed` parameters:
+The module supports three rendering modes controlled by the `mode` parameter:
 
-**1. SVG Symbols Mode (inline=true, embed=true):**
+**1. SVG Symbols Mode (mode="symbols"):**
 - Loads static SVG files from Hugo resources at build time
 - Creates reusable SVG symbols with `<symbol>` and `<use>` references
 - Icons output as `<svg overflow="visible"><use href="#fas-heart"></use></svg>` markup
@@ -60,16 +60,15 @@ The module supports three rendering modes controlled by `inline` and `embed` par
 - Best for: Static sites, performance-critical applications, when JS is disabled
 - Requires: `{{- partial "assets/symbols.html" . -}}` in layout to output symbol definitions
 
-**2. SVG+JS Mode (inline=true, embed=false):**
-- Uses FontAwesome's official SVG+JS runtime
-- Loads FontAwesome JavaScript library via `fontawesome-loader.js`
-- Icons output as `<i class="fas fa-heart"></i>` markup
-- FontAwesome JS converts to SVG at runtime in browser
-- Proper scaling, sizing, accessibility handled by FontAwesome automatically
-- Best for: Dynamic applications, when using FontAwesome animations/features
-- Requires: Hinode module integration (automatically loads JS)
+**2. SVG Inline Mode (mode="svg"):**
+- Loads static SVG files from Hugo resources at build time
+- Icons output directly as `<svg overflow="visible" class="svg-inline--fa ..."><path .../></svg>` markup
+- No JavaScript required - pure static SVG, no `<symbol>/<use>` indirection
+- No layout partial required
+- Best for: When you want inline SVG without the symbol map overhead
+- Animated icons (fa-spin, fa-beat, etc.) and stacked icons work natively via CSS transforms
 
-**3. Webfont Mode (inline=false):**
+**3. Webfont Mode (mode="webfonts"):**
 - Uses FontAwesome webfonts rendered via CSS
 - Loads FontAwesome CSS files with @font-face rules
 - Icons output as `<i class="fas fa-heart"></i>` markup
@@ -81,12 +80,12 @@ The module supports three rendering modes controlled by `inline` and `embed` par
 The icon.html partial supports multiple icon libraries:
 
 1. **FontAwesome (fas, fa, fab, far):**
-   - `inline=true, embed=true`: Static SVG with symbol references (loads from `assets/svgs/fa/`)
-   - `inline=true, embed=false`: `<i>` tags rendered by FontAwesome JS
-   - `inline=false`: `<i>` tags rendered as webfonts via CSS
+   - `mode="symbols"`: Static SVG with symbol references (loads from `assets/svgs/fa/`)
+   - `mode="svg"`: Inline SVG at build time (loads from `assets/svgs/fa/`)
+   - `mode="webfonts"`: `<i>` tags rendered as webfonts via CSS
 2. **Bootstrap Icons (bi) and other libraries:**
-   - `inline=true`: Static SVG loaded from `assets/svgs/{family}/{name}.svg`
-   - `inline=false`: `<i>` tag rendered as webfont
+   - `mode="symbols"` or `mode="svg"`: Static SVG loaded from `assets/svgs/{family}/{name}.svg`
+   - `mode="webfonts"`: `<i>` tag rendered as webfont
 3. **Custom SVGs:** Always loaded via `resources.Get` using `src` parameter
 
 ### Hugo Module Architecture
@@ -101,11 +100,7 @@ The module imports Font Awesome directly from the official Git repository as a H
 **Hugo Mounts** (from vendored module):
 - **SCSS:** `scss` → `assets/scss/modules/fontawesome` (for webfont mode)
 - **Webfonts:** `webfonts` → `static/webfonts` (for webfont mode)
-- **SVGs:** `svgs` → `assets/svgs/fa` (for SVG symbols mode)
-- **JS:** `js` → `static/js/fontawesome` (for SVG+JS mode - minified files only)
-
-**Module loader:**
-- **JS loader:** `assets/js/modules/fontawesome/fontawesome-loader.js` → Hinode module system
+- **SVGs:** `svgs` → `assets/svgs/fa` (for SVG symbols and SVG inline modes)
 
 **Version Management:**
 - Font Awesome uses non-standard Git tags (e.g., "Release 7.0.0" instead of "v7.0.0")
@@ -139,7 +134,7 @@ Set in `params.modules.fontawesome` of your Hugo config:
 
 - `mode` (string, default: "symbols") - Rendering mode for icons
   - `"symbols"`: SVG symbols mode - loads static SVGs at build time, creates reusable symbols with `<use>` references. Requires `{{- partial "assets/symbols.html" . -}}` in your layout to output symbol definitions. No JavaScript required. Best for static sites and performance-critical applications.
-  - `"svg"`: SVG+JS mode - uses FontAwesome JavaScript runtime to convert `<i>` tags to SVG at runtime in browser. Best for dynamic applications with animations and advanced features.
+  - `"svg"`: SVG inline mode - loads static SVGs at build time and outputs them directly as inline `<svg>` elements. No JavaScript required, no layout partial needed. Best for straightforward inline SVG without the symbol map overhead.
   - `"webfonts"`: Webfont mode - uses CSS @font-face rules to render icons as webfonts via `::before` pseudo-elements. Best for simple integration and legacy browser support.
 
 - `debug` (boolean, default: false) - Debug output for FontAwesome icons. Shows original markup as HTML comments.
@@ -157,7 +152,7 @@ Set in `params.modules.fontawesome` of your Hugo config:
 
 **Deprecated parameters (from v4.x):**
 - `inline` - Use `mode` instead. Previously: `inline=true` for SVG modes, `inline=false` for webfonts. Old configurations are automatically migrated.
-- `embed` - Use `mode` instead. Previously: `embed=true` for symbols, `embed=false` for SVG+JS runtime. Old configurations are automatically migrated.
+- `embed` - Use `mode` instead. Previously: `embed=true` for symbols, `embed=false` for SVG inline. Old configurations are automatically migrated.
 
 **Removed parameters (from v3):**
 - `renderMode` - No per-family mixed mode support in v4
@@ -165,11 +160,10 @@ Set in `params.modules.fontawesome` of your Hugo config:
 
 ### Template Integration
 
-**For SVG+JS mode (mode="svg"):**
-- Hinode sites automatically load the FontAwesome JavaScript via the module integration system
-- The loader file `assets/js/modules/fontawesome/fontawesome-loader.js` is integrated via Hinode's module loader
-- No manual template inclusion required for Hinode sites
-- Non-Hinode sites: Include the loader script in your layout before `</body>`
+**For SVG inline mode (mode="svg"):**
+- No template integration required
+- Icons are rendered as inline `<svg>` elements at build time
+- No JavaScript needed
 
 **For SVG symbols mode (mode="symbols"):**
 - Must include the symbols partial in your layout to output symbol definitions:
@@ -205,19 +199,19 @@ All shortcodes delegate to the core `icon.html` partial:
      - Adds `overflow="visible"` attribute to prevent clipping of FA v7 icons with negative coordinates
      - Stores symbol definition (with `overflow="visible"`) in page.Scratch for output via `symbols.html` partial
      - Animated icons (fa-spin, fa-beat, etc.) use inline SVG instead (no symbols)
-   - **SVG+JS mode (`mode="svg"`):**
-     - Outputs simple `<i class="fas fa-heart"></i>` tag
-     - FontAwesome JS converts to SVG at runtime in browser
+   - **SVG inline mode (`mode="svg"`):**
+     - Loads static SVG from `assets/svgs/fa/{family}/{name}.svg`
+     - Outputs directly as `<svg overflow="visible" class="svg-inline--fa fas fa-heart ..."><path .../></svg>`
+     - Adds `overflow="visible"` to prevent clipping of FA v7 icons with negative coordinates
    - **Webfont mode (`mode="webfonts"`):**
      - Outputs `<i class="fas fa-heart"></i>` tag
      - CSS renders as webfont with ::before pseudo-element
 
 **For other icon libraries (Bootstrap Icons, etc.):**
-1. If `mode="symbols"`: Load static SVG from `assets/svgs/{family}/{name}.svg` and create symbol references (same as FontAwesome)
-2. If `mode="svg"`: Load static SVG as inline SVG (no symbols)
-3. If `mode="webfonts"`: Output `<i>` tag for webfont rendering
-4. Width/height attributes removed to allow fa-2x, fa-4x, etc. sizing utilities to work
-5. Original class/fill attributes cleaned to prevent duplicates
+1. If `mode="symbols"` or `mode="svg"`: Load static SVG from `assets/svgs/{family}/{name}.svg` and output as inline SVG (symbols mode additionally creates symbol references)
+2. If `mode="webfonts"`: Output `<i>` tag for webfont rendering
+3. Width/height attributes removed to allow fa-2x, fa-4x, etc. sizing utilities to work
+4. Original class/fill attributes cleaned to prevent duplicates
 
 **For custom SVGs (src parameter):**
 1. Always load via `resources.Get` with basic SVG processing
@@ -226,47 +220,37 @@ All shortcodes delegate to the core `icon.html` partial:
 
 ## Important Implementation Details
 
-**FontAwesome JS Loading (SVG+JS mode: mode="svg"):**
-- Loader: `assets/js/modules/fontawesome/fontawesome-loader.js`
-- Supports both new `mode` parameter and legacy `inline`/`embed` parameters
-- Loads in order: fontawesome.min.js, solid.min.js, regular.min.js, brands.min.js
-- Scripts loaded with `async=false` to ensure proper loading order
-- Only outputs when `mode="svg"` (or legacy `inline=true, embed=false`)
-- Integrated via Hinode's module system (automatically included)
-
-**SVG Symbol Loading (SVG symbols mode: mode="symbols"):**
+**SVG Loading (symbols and svg modes):**
 - Loads static SVG files from `assets/svgs/fa/{family}/{name}.svg` at build time
 - Uses original viewBox from FontAwesome (no adjustments)
-- Adds `overflow="visible"` SVG attribute to both symbol definitions and containing `<svg>` elements
-- This prevents clipping of FA v7 icons with paths extending beyond the viewBox (e.g., negative coordinates)
-- Creates reusable symbol definitions stored in page.Scratch
+- Adds `overflow="visible"` SVG attribute to prevent clipping of FA v7 icons with negative coordinates
+- Removes fixed width/height attributes to allow CSS sizing utilities (fa-2x, fa-3x, etc.)
+- **Symbols mode additionally:** Creates reusable symbol definitions stored in page.Scratch; animated icons (fa-spin, fa-beat, etc.) use inline SVG instead of symbols (for correct transform behavior)
 - Symbol definitions output via `{{- partial "assets/symbols.html" . -}}` partial
-- Animated icons (fa-spin, fa-beat, etc.) use inline SVG instead of symbols (for correct transform behavior)
 
 **CSS Loading:**
-- **SVG symbols mode** (`mode="symbols"`): Loads core utilities + custom SVG CSS
+- **SVG symbols mode** (`mode="symbols"`): Loads core utilities + custom SVG CSS + stacking CSS
   - Core utilities: sizing (fa-2x, fa-3x), animations (fa-spin, fa-beat), stacking (fa-stack), etc.
-  - Custom SVG CSS: vertical alignment, overflow handling, stacking support
-  - Vertical alignment matches FontAwesome's SVG+JS mode (base: `-0.125em`, size-specific overrides)
-- **Webfont mode** (`mode="webfonts"`): Loads core utilities + webfont CSS
-  - Core utilities: same as SVG symbols mode
+  - Custom SVG CSS: vertical alignment, overflow handling
+  - Stacking CSS: `.fa-stack` rules for SVG elements
+  - Vertical alignment matches FontAwesome's official values (base: `-0.125em`, size-specific overrides)
+- **SVG inline mode** (`mode="svg"`): Loads core utilities + custom SVG CSS + stacking CSS
+  - Same CSS as symbols mode — all three sets always loaded for both SVG modes
+- **Webfont mode** (`mode="webfonts"`): Loads core utilities + webfont CSS + custom SVG CSS
+  - Core utilities: same as SVG modes
   - Webfont CSS: solid.scss, regular.scss, brands.scss (with @font-face rules)
   - Custom SVG CSS: for custom SVG icons (vertical alignment, overflow handling)
-- **SVG+JS mode** (`mode="svg"`): NO core utilities or custom CSS loaded
-  - FontAwesome JavaScript provides complete CSS (all sizing, animations, stacking, etc.)
-  - Loading core utilities in this mode causes CSS conflicts with FontAwesome's JS-injected styles
-  - Critical for stacked icons: core utilities' `.fa-stack` rules conflict with FA's runtime CSS
-- No CSS conflicts between modes due to conditional loading
+  - Stacking CSS excluded (webfont stacking handled by FA's own CSS)
+- No CSS conflicts between modes
 
 **Clipping Prevention for FA v7 Icons:**
 - Font Awesome 7.x icons can have paths with negative coordinates (e.g., star icon has y=-18.9)
 - Standard viewBox (e.g., "0 0 512 512") would normally clip content outside these bounds
 - Solution: Add `overflow="visible"` SVG attribute (per [FontAwesome SVG Sprites documentation](https://docs.fontawesome.com/web/add-icons/svg-sprites/))
-- Applied to both symbol definitions (`<symbol overflow="visible">`) and containing SVG elements
+- Applied to symbol definitions (`<symbol overflow="visible">`) and all containing SVG elements
 - Maintains original viewBox for proper scaling while allowing content to render beyond bounds
-- Alternative approaches (viewBox adjustment, inline SVG) caused vertical alignment or transform issues
 
-**Vertical Alignment in SVG Symbols Mode:**
+**Vertical Alignment in SVG Modes:**
 - Replicates FontAwesome's official SVG+JS vertical-align values (extracted from FontAwesome v7.2.0 JavaScript)
 - Base alignment: `vertical-align: -0.125em` for `.svg-inline--fa` class
 - Size-specific overrides to match FontAwesome's behavior:
@@ -276,7 +260,7 @@ All shortcodes delegate to the core `icon.html` partial:
   - `.svg-inline--fa.fa-lg`: `-0.2em`
   - `.svg-inline--fa.fa-xl`: `-0.25em`
   - `.svg-inline--fa.fa-2xl`: `-0.3125em`
-- Ensures consistent vertical centering across all three rendering modes (symbols, SVG+JS, webfonts)
+- Ensures consistent vertical centering across all three rendering modes
 
 **Width/Height Removal for CSS Sizing:**
 - All icon types (FontAwesome, Bootstrap Icons, custom SVGs) have width/height attributes removed from SVG elements
@@ -287,17 +271,17 @@ All shortcodes delegate to the core `icon.html` partial:
 **Stacked Icon Support Across All Modes:**
 - FontAwesome's icon stacking (using `fa-stack`, `fa-stack-1x`, `fa-stack-2x` classes) works correctly in all three rendering modes
 - **SVG symbols mode** (`mode="symbols"`):
-  - Uses symbol references for stacked icons (no inline SVG needed)
+  - Uses symbol references for stacked icons
   - Custom `.fa-stack` CSS provides proper positioning and sizing
   - Icons scale correctly relative to each other (2x vs 1x)
-- **SVG+JS mode** (`mode="svg"`):
-  - Core utilities CSS excluded to prevent conflicts with FontAwesome's JavaScript
-  - FontAwesome JS provides complete stacking CSS at runtime
-  - Critical fix: Loading core utilities' `.fa-stack` rules in this mode caused sizing conflicts
+- **SVG inline mode** (`mode="svg"`):
+  - Uses inline SVG for stacked icons
+  - Same custom `.fa-stack` CSS as symbols mode
+  - CSS transforms work natively on inline SVG elements
 - **Webfont mode** (`mode="webfonts"`):
   - Core utilities CSS provides stacking support
   - Webfonts render via ::before pseudo-elements with correct positioning
-- **Implementation**: `assets/scss/fontawesome.scss` conditionally excludes core utilities when `mode="svg"` to avoid CSS conflicts with FontAwesome's JavaScript-injected styles
+- **Implementation**: `assets/scss/fontawesome.scss` loads the `.fa-stack` stacking rules for both SVG modes (`mode="symbols"` and `mode="svg"`) via a `{{ if ne $globalMode "webfonts" }}` guard
 - Stacked icons also have spacing disabled (no `&nbsp;` between icons) to prevent layout issues
 
 **Deprecation Warnings (mod-fontawesome v4.1.0+ / Hinode v2.0.0+):**
@@ -323,13 +307,12 @@ All shortcodes delegate to the core `icon.html` partial:
 ## Breaking Changes from v3
 
 1. **Removed renderMode config** - No per-family mixed mode support; global `inline` and `embed` settings instead (now `mode`)
-2. **Changed embed parameter behavior** - Now controls SVG rendering method (symbols vs JS runtime), not just symbol maps
+2. **Changed embed parameter behavior** - Now controls SVG rendering method (symbols vs inline), not just symbol maps
 3. **Removed styles parameter** - All icon sets (solid, regular, brands) always available
 4. **Changed architecture** - No longer uses npm; imports from Git repository as Hugo module
 5. **Changed mounting** - Mounts from vendored Hugo module, not node_modules
-6. **Requires Hinode integration** - JS loader integrated via Hinode module system (non-Hinode sites need manual integration)
-7. **No dist/ folder** - FontAwesome files mounted from vendored Hugo module
-8. **Hugo minimum version** - Lowered to 0.110.0 (from 0.153.0)
+6. **No dist/ folder** - FontAwesome files mounted from vendored Hugo module
+7. **Hugo minimum version** - Lowered to 0.110.0 (from 0.153.0)
 
 ## Migration from v3 to v4
 
@@ -371,9 +354,8 @@ For **SVG symbols mode** (`inline=true, embed=true`):
 {{- partial "assets/symbols.html" . -}}
 ```
 
-For **SVG+JS mode** (`inline=true, embed=false`):
-- Hinode sites: Automatically integrated via module system (no action needed)
-- Non-Hinode sites: Include `fontawesome-loader.js` in your layout
+For **SVG inline mode** (`inline=true, embed=false`):
+- No template integration required - icons render as inline SVG at build time
 
 For **webfont mode** (`inline=false`):
 - No template changes required
@@ -415,7 +397,7 @@ The `mode` parameter is a simpler alternative to the `inline` and `embed` boolea
 
 **Mapping old parameters to new mode:**
 - `inline=true, embed=true` → `mode="symbols"` (SVG symbols mode)
-- `inline=true, embed=false` → `mode="svg"` (SVG+JS runtime mode)
+- `inline=true, embed=false` → `mode="svg"` (SVG inline mode)
 - `inline=false` → `mode="webfonts"` (Webfont mode)
 
 **Backward compatibility:**
@@ -438,16 +420,14 @@ The `mode` parameter is a simpler alternative to the `inline` and `embed` boolea
 │   └── _partials/
 │       └── assets/           # Core rendering logic (icon.html, symbols.html)
 ├── assets/
-│   ├── scss/                 # Module SCSS (fontawesome.scss)
-│   └── js/modules/fontawesome/  # FontAwesome loader (fontawesome-loader.js)
+│   └── scss/                 # Module SCSS (fontawesome.scss)
 ├── data/
 │   └── structures/           # Argument validation schemas (icon.yml)
 ├── _vendor/                  # Vendored Hugo modules (includes Font-Awesome)
 │   └── github.com/FortAwesome/Font-Awesome/
 │       ├── scss/             # FontAwesome SCSS (mounted to assets/scss/modules/fontawesome)
 │       ├── svgs/             # FontAwesome SVG icons (mounted to assets/svgs/fa)
-│       ├── webfonts/         # FontAwesome webfonts (mounted to static/webfonts)
-│       └── js/               # FontAwesome JavaScript (mounted to static/js/fontawesome)
+│       └── webfonts/         # FontAwesome webfonts (mounted to static/webfonts)
 ├── exampleSite/              # Hugo example site for testing
 ├── config.toml               # Module configuration with Hugo module imports and mounts
 ├── go.mod                    # Hugo module dependencies (Font-Awesome import)
@@ -471,14 +451,15 @@ npm run build
 # Test in browser - icons should render as static SVG
 ```
 
-**Testing in SVG+JS mode:**
+**Testing in SVG inline mode:**
 ```bash
 # Set mode = "svg" in exampleSite/hugo.toml
 npm run build
-# Verify JS files in public/js/fontawesome/ (fontawesome.min.js, solid.min.js, etc.)
-# Verify FontAwesome loader in main.bundle.js
-# Test in browser - icons should render as <svg> after JS processing
-# Check browser console for FontAwesome runtime messages
+# Verify NO JS files/script tags in HTML
+# Verify inline <svg class="svg-inline--fa ..."> elements in HTML output
+# Verify overflow="visible" on all SVG icons (clipping prevention)
+# Test in browser - icons should render directly as inline SVG
+# Verify fa-2x, fa-spin, fa-stack etc. all work via CSS
 ```
 
 **Testing in webfont mode:**
@@ -514,10 +495,10 @@ hugo mod vendor  # Ensure _vendor is up to date
 - Check `_vendor/github.com/FortAwesome/Font-Awesome/` exists
 - Use `debug` setting to see original vs. rendered output
 - For symbols mode (`mode="symbols"`): Verify `{{- partial "assets/symbols.html" . -}}` is in layout
-- For SVG+JS mode (`mode="svg"`):
-  - Check browser console for JS errors
-  - Verify FontAwesome loader is in main.bundle.js
-  - Ensure fontawesome-loader.js supports the `mode` parameter
+- For SVG inline mode (`mode="svg"`):
+  - Verify `<svg class="svg-inline--fa ...">` elements appear in HTML output
+  - Check that `overflow="visible"` is present on SVG elements (clipping prevention)
+  - Verify no `<i class="fas ...">` tags or JS script references in output
 - For webfont mode (`mode="webfonts"`): Check CSS is loaded and webfont files present
 - Verify Hugo mounts in config.toml point to correct vendored paths
 

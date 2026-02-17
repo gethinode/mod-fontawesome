@@ -25,20 +25,10 @@
       source = "svgs"
       target = "assets/svgs/fa"
 
-    # Mount FontAwesome JavaScript for SVG+JS mode (mode="svg")
-    [[module.imports.mounts]]
-      source = "js"
-      target = "static/js/fontawesome"
-      includeFiles = ["fontawesome.min.js", "solid.min.js", "regular.min.js", "brands.min.js"]
-
   # Mount module's own assets
   [[module.mounts]]
     source = "assets"
     target = "assets"
-  # Mount conditional JavaScript loader to Hinode's module system
-  [[module.mounts]]
-    source = "assets/js/modules"
-    target = "assets/js/modules"
   [[module.mounts]]
     source = "data"
     target = "data"
@@ -55,7 +45,7 @@
 
 [params.modules.fontawesome]
   integration = "core"
-  mode = "symbols"       # Rendering mode: "symbols" (static SVG), "svg" (FontAwesome JS), "webfonts" (CSS)
+  mode = "symbols"       # Rendering mode: "symbols" (SVG symbols), "svg" (inline SVG), "webfonts" (CSS)
   debug = false          # Show original markup as comments (FontAwesome icons only)
   skipMissing = false    # Warn vs. error on missing icons
   defaultFamily = "fas"  # Default icon family when none specified (e.g., "fas", "fi-rr", "bi")

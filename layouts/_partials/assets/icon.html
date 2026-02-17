@@ -225,10 +225,37 @@
                         {{- $output = $inject -}}
                     {{- end -}}
                 {{- end -}}
+            {{- else if eq $mode "svg" -}}
+                {{/* Build-time inline SVG mode - load static SVG, no JS required */}}
+                {{- $faFamily := cond (eq $family "fas") "solid" (cond (eq $family "far") "regular" (cond (eq $family "fab") "brands" "solid")) -}}
+                {{- $path := printf "svgs/fa/%s/%s.svg" $faFamily $name -}}
+                {{- $svg := resources.Get $path -}}
+                {{- if not $svg -}}
+                    {{- $msg := printf "partial [assets/icon.html] - Cannot find FontAwesome icon: %s" (path.Join "assets" $path) -}}
+                    {{- if site.Params.modules.fontawesome.skipMissing -}}
+                        {{- warnf $msg -}}
+                        {{/* Fallback to webfont icon class */}}
+                        {{- $output = printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
+                    {{- else -}}
+                        {{- errorf $msg -}}
+                    {{- end -}}
+                {{- else -}}
+                    {{/* Process SVG content */}}
+                    {{- $regex := printf `%s((?:.|\\n)*)%s` "<!--" "-->" -}}
+                    {{- $content := (replaceRE $regex "" $svg.Content) -}}
+                    {{/* Strip XML declaration if present */}}
+                    {{- $content = replaceRE `<\?xml[^>]*\?>` "" $content -}}
+                    {{- $content = replaceRE `^\s+` "" $content -}}
+                    {{- $inject := (replaceRE "xmlns=\\\"(.*?)\\\"" (printf "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $family $name $attr (or $style "")) $content) -}}
+                    {{/* Remove fixed width/height to allow CSS sizing (fa-2x, fa-3x, etc.) */}}
+                    {{- $inject = replaceRE "width=\\\"(.*?)\\\"" "" $inject -}}
+                    {{- $inject = replaceRE "height=\\\"(.*?)\\\"" "" $inject -}}
+                    {{/* Add overflow="visible" to prevent clipping of FA v7 paths with negative coordinates */}}
+                    {{- $inject = replaceRE "(<svg[^>]*)" "${1} overflow=\"visible\"" $inject -}}
+                    {{- $output = $inject -}}
+                {{- end -}}
             {{- else -}}
-                {{/* SVG+JS mode (inline=true, embed=false) or webfont mode (inline=false) */}}
-                {{/* Also use <i> tags for stacked icons to enable proper FA stacking */}}
-                {{/* Output simple <i> tag - FontAwesome JS or CSS handles rendering */}}
+                {{/* Webfont mode - <i> tag rendered via CSS @font-face */}}
                 {{- $output = printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
             {{- end -}}
         {{- else -}}
