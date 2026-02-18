@@ -19,7 +19,7 @@
     {{ $error = $args.err }}
 {{ end }}
 
-{{- $icon := $args.icon -}}
+{{- $icon := string $args.icon -}}
 {{- $src := $args.src -}}
 
 {{- if and (not $icon) (not $src) -}}
