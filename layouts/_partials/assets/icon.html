@@ -19,7 +19,7 @@
     {{ $error = $args.err }}
 {{ end }}
 
-{{- $icon := $args.icon -}}
+{{- $icon := string $args.icon -}}
 {{- $src := $args.src -}}
 
 {{- if and (not $icon) (not $src) -}}
@@ -146,7 +146,7 @@
         {{- end -}}
 
         {{- $family = (index $icon_class 0) -}}
-        {{- $attr = delimit (after 2 $icon_class) " " -}}
+        {{- $attr = trim (printf "%s %s" (delimit (after 2 $icon_class) " ") ($args.class | default "")) " " -}}
 
         {{/* Normalize and check FontAwesome families */}}
         {{- $family = replace $family "fa-solid" "fas" -}}
