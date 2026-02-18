@@ -60,7 +60,7 @@ No npm installation required - all Font Awesome assets are automatically include
 ## Configuration
 
 > [!IMPORTANT]
-> Webfonts (`mode = "webfonts"`) require Dart Sass to function correctly. See https://gohugo.io/functions/css/sass/#dart-sass for installation instructions.
+> Font Awesome v7 requires Dart Sass to function correctly. It no longer supports LibSass. See the [Hugo Docs](https://gohugo.io/functions/css/sass/#dart-sass) for installation instructions.
 
 This module supports the following parameters (see the section `params.modules` in `config.toml`):
 

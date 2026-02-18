@@ -15,6 +15,12 @@
     {{- $globalMode = default "symbols" $globalMode -}}
 {{- end -}}
 
+{{/* Validate transpiler compatibility - FontAwesome v7 SVG/symbols SCSS uses @use which requires DartSass */}}
+{{- $transpiler := site.Params.main.build.transpiler | default "dartsass" -}}
+{{- if ne $transpiler "dartsass" -}}
+    {{- errorf "scss [fontawesome.scss] - FontAwesome v7 requires DartSass; set 'main.build.transpiler = \"dartsass\"' in params.toml (current: %q)" $transpiler -}}
+{{- end -}}
+
 // Load FontAwesome core utilities (sizing, animations, stacked, etc.)
 // This provides fa-2x, fa-3x, fa-spin, fa-rotate-90, etc.
 @import "modules/fontawesome/fontawesome";
