@@ -15,7 +15,7 @@
 {{- end -}}
 
 {{/* Determine mode from config, with fallback to legacy inline/embed parameters */}}
-{{- $globalMode := site.Params.modules.fontawesome.mode -}}
+{{- $globalMode := cond site.Params.env_bookshop_live "webfonts" site.Params.modules.fontawesome.mode -}}
 {{- if not $globalMode -}}
     {{/* Fallback to legacy inline/embed if mode not set in config */}}
     {{- $inline := default true site.Params.modules.fontawesome.inline -}}

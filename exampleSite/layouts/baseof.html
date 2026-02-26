@@ -34,7 +34,7 @@
 
     <strong>Global Settings:</strong>
     <ul style="margin: 10px 0;">
-      {{- $globalMode := site.Params.modules.fontawesome.mode -}}
+      {{- $globalMode := cond site.Params.env_bookshop_live "webfonts" site.Params.modules.fontawesome.mode -}}
       {{- $configuredMode := $globalMode -}}
       {{- $modeInvalid := false -}}
       {{- if not $globalMode -}}
