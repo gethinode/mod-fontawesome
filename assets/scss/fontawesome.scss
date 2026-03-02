@@ -16,7 +16,10 @@
 {{- end -}}
 
 {{/* Validate transpiler compatibility - FontAwesome v7 SVG/symbols SCSS uses @use which requires DartSass */}}
-{{- $transpiler := site.Params.main.build.transpiler | default "dartsass" -}}
+{{- $transpiler := "dartsass" -}}
+{{- if and (reflect.IsMap site.Params.main) (reflect.IsMap site.Params.main.build) }}
+    {{- $transpiler = site.Params.main.build.transpiler -}}
+{{- end -}}
 {{- if ne $transpiler "dartsass" -}}
     {{- errorf "scss [fontawesome.scss] - FontAwesome v7 requires DartSass; set 'main.build.transpiler = \"dartsass\"' in params.toml (current: %q)" $transpiler -}}
 {{- end -}}
