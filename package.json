@@ -7,22 +7,23 @@
     "module"
   ],
   "main": "index.js",
+  "packageManager": "pnpm@11.8.0+sha512.c1f5e7c4cb241c8f174b743851d82f42b802324afc8b0f116b96adb15aa06664948dde36960a3ba1079ba5b4b29dd0140135b94b5b5f5263592249d68e555f26",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "prestart": "npm run clean && npm run mod:vendor",
+    "prestart": "pnpm clean && pnpm mod:vendor",
     "start": "hugo server -s exampleSite --bind=0.0.0.0 --disableFastRender --printI18nWarnings",
-    "prebuild": "npm run clean && npm run mod:vendor",
+    "prebuild": "pnpm clean && pnpm mod:vendor",
     "build": "hugo --gc --minify -s exampleSite",
     "clean": "rimraf exampleSite/public exampleSite/resources",
     "mod:tidy": "hugo mod tidy -s exampleSite",
-    "mod:update": "rimraf _vendor && hugo mod get -u github.com/FortAwesome/Font-Awesome@7.x && cd exampleSite && hugo mod get -u github.com/FortAwesome/Font-Awesome@7.x && cd .. && hugo mod get -u ./... && npm run -s mod:vendor && npm run -s mod:tidy",
+    "mod:update": "rimraf _vendor && hugo mod get -u github.com/FortAwesome/Font-Awesome@7.x && cd exampleSite && hugo mod get -u github.com/FortAwesome/Font-Awesome@7.x && cd .. && hugo mod get -u ./... && pnpm mod:vendor && pnpm mod:tidy",
     "mod:vendor": "rimraf _vendor && hugo mod vendor",
     "prepare": "node .husky/install.mjs",
-    "test": "npm run -s build",
-    "upgrade": "npx npm-check-updates -u && npm run -s mod:update",
+    "test": "pnpm build",
+    "upgrade": "pnpm dlx npm-check-updates -u && pnpm mod:update",
     "version": "hugo version"
   },
   "repository": {
@@ -56,7 +57,7 @@
       [
         "@semantic-release/exec",
         {
-          "prepare": "npm install"
+          "prepare": "pnpm install --frozen-lockfile"
         }
       ],
       [
@@ -64,7 +65,7 @@
         {
           "assets": [
             "package.json",
-            "package-lock.json"
+            "pnpm-lock.yaml"
           ],
           "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
