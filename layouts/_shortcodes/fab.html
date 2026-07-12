@@ -6,14 +6,24 @@
 
 {{- $error := false -}}
 
-{{/* Validate and initialize arguments using icon structure */}}
-{{ $args := partial "utilities/InitArgs.html" (dict "structure" "icon" "args" .Params "named" .IsNamedParams "group" "shortcode") }}
-{{ if or $args.err $args.warnmsg }}
-    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict
+{{/*
+    Validate and initialize arguments using the icon structure. The icon structure only declares
+    two positions (icon, class); this shortcode joins any further positional arguments into the
+    class itself (see below), so only the declared positions are forwarded into validation to
+    avoid excess-positional warnings on calls like `{{< fab "fire" "fa-stack-1x" "fa-inverse" >}}`.
+*/}}
+{{- $validationArgs := .Params -}}
+{{- if not .IsNamedParams -}}
+    {{- $validationArgs = first 2 .Params -}}
+{{- end -}}
+{{ $result := partial "utilities/Args.html" (dict "structure" "icon" "args" $validationArgs "named" .IsNamedParams "group" "shortcode" "strict" false) }}
+{{ $args := $result.args }}
+{{ if or $result.err $result.warnmsg }}
+    {{ partial (cond $result.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict
         "partial"  "shortcodes/fab.html"
         "warnid"   "warn-invalid-arguments"
         "msg"      "Invalid arguments"
-        "details"  ($args.errmsg | append $args.warnmsg)
+        "details"  ($result.errmsg | append $result.warnmsg)
         "file"     page.File
         "position" .Position
     )}}
@@ -36,7 +46,16 @@
     {{- $fullIcon = printf "fab %s" $icon -}}
 {{- end -}}
 
-{{- $spacing := $args.spacing | default (not (in (split $args.wrapper " ") "fa-li")) -}}
+{{/*
+    The "spacing" argument always carries a schema default of true, so it is never nil by the
+    time it reaches here. Only fall back to the fa-li-aware default when the caller genuinely
+    left it unset (per $result.defaulted); otherwise an explicit `spacing=false` would be
+    silently discarded by a plain `| default` fallback.
+*/}}
+{{- $spacing := $args.spacing -}}
+{{- if in $result.defaulted "spacing" -}}
+    {{- $spacing = not (in (split (default "" $args.wrapper) " ") "fa-li") -}}
+{{- end -}}
 {{- if not $fullIcon -}}
     {{ partial "utilities/LogErr.html" (dict
         "partial"  "shortcodes/fab.html"
