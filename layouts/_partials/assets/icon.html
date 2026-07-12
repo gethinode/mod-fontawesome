@@ -6,17 +6,22 @@
 
 {{ $error := false }}
 
-{{/* Initialize arguments */}}
-{{ $args := partial "utilities/InitArgs.html" (dict "structure" "icon" "args" . "group" "partial")}}
-{{ if or $args.err $args.warnmsg }}
-    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict
+{{/*
+    Initialize arguments. This partial is a public entry point invoked directly by many other
+    modules and Hinode itself with values sourced from page content, data files, and i18n
+    strings, so it validates non-strict like a site-authored-content entry point.
+*/}}
+{{ $result := partial "utilities/Args.html" (dict "structure" "icon" "args" . "group" "partial" "strict" false) }}
+{{ $args := $result.args }}
+{{ if or $result.err $result.warnmsg }}
+    {{ partial (cond $result.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict
         "partial" "assets/icon.html"
         "warnid"  "warn-invalid-arguments"
         "msg"     "Invalid arguments"
-        "details" ($args.errmsg | append $args.warnmsg)
+        "details" ($result.errmsg | append $result.warnmsg)
         "file"    page.File
     )}}
-    {{ $error = $args.err }}
+    {{ $error = $result.err }}
 {{ end }}
 
 {{- $icon := string $args.icon -}}
