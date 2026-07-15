@@ -45,7 +45,9 @@
         {{- printf "<!-- SVG symbol map -->" | safeHTML }}
     {{ end -}}
 
+    {{/* Icons register in first-use order, which races across pages when the first use
+         sits inside a cached partial; sort so identical icon sets emit identical bytes. */}}
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" display="none">
-        {{ delimit (.Scratch.Get "icons" | uniq) "\n" | safeHTML }}
+        {{ delimit (sort (.Scratch.Get "icons" | uniq)) "\n" | safeHTML }}
     </svg>
 {{ end }}
