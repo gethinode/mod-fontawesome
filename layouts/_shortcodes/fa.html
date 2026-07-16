@@ -24,7 +24,7 @@
         "warnid"   "warn-invalid-arguments"
         "msg"      "Invalid arguments"
         "details"  ($result.errmsg | append $result.warnmsg)
-        "file"     page.File
+        "file"     .Page.File
         "position" .Position
     )}}
 {{ end }}
@@ -60,7 +60,7 @@
     {{ partial "utilities/LogErr.html" (dict
         "partial"  "shortcodes/fa.html"
         "msg"      "Missing icon name"
-        "file"     page.File
+        "file"     .Page.File
         "position" .Position
     )}}
     {{ $error = true }}
