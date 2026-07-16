@@ -1,5 +1,7 @@
 github.com/FortAwesome/Font-Awesome v0.0.0-20260625220317-70fb2dd154b6 h1:slcJCZg0UQMHqw5JCoVmE8/IJfoNUprTmP2T3lDG9VY=
 github.com/FortAwesome/Font-Awesome v0.0.0-20260625220317-70fb2dd154b6/go.mod h1:IUgezN/MFpCDIlFezw3L8j83oeiIuYoj28Miwr/KUYo=
+github.com/FortAwesome/Font-Awesome v0.0.0-20260715180930-14c65a3747d0 h1:4+bB2ojsMTsQroHtQr1FWy2gxFzpBn5hISldeRfxF+o=
+github.com/FortAwesome/Font-Awesome v0.0.0-20260715180930-14c65a3747d0/go.mod h1:IUgezN/MFpCDIlFezw3L8j83oeiIuYoj28Miwr/KUYo=
 github.com/gethinode/mod-utils/v6 v6.0.0 h1:buP32wf+K2NUxlA2S3gKVKjoT6cnCdGktTYEAWeNd/Q=
 github.com/gethinode/mod-utils/v6 v6.0.0/go.mod h1:E5tO9w3VKaidJpu1nI8zAKmh0bddFHOIIQnudAaXQTs=
 github.com/gethinode/mod-utils/v6 v6.4.0 h1:l49KrawKE/7c6XE00wXQ9T5/kuTfiETerBz6OWn3SJc=
@@ -8,3 +10,5 @@ github.com/gethinode/mod-utils/v6 v6.4.1 h1:jHiJEwSjLp6tqIXayxUQTxILwnM7hWMgYyTY
 github.com/gethinode/mod-utils/v6 v6.4.1/go.mod h1:E5tO9w3VKaidJpu1nI8zAKmh0bddFHOIIQnudAaXQTs=
 github.com/gethinode/mod-utils/v6 v6.5.0 h1:NdeITAfjt2ah9OHt0Nuu6F+STlC0bO9oHaFl8Agi2rk=
 github.com/gethinode/mod-utils/v6 v6.5.0/go.mod h1:E5tO9w3VKaidJpu1nI8zAKmh0bddFHOIIQnudAaXQTs=
+github.com/gethinode/mod-utils/v6 v6.5.1 h1:HhCN8Bc0cWxIY0ukjKP9O3jDbKg9F/YaTPO6vqjjk+I=
+github.com/gethinode/mod-utils/v6 v6.5.1/go.mod h1:E5tO9w3VKaidJpu1nI8zAKmh0bddFHOIIQnudAaXQTs=
