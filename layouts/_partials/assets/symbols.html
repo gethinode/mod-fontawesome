@@ -45,9 +45,21 @@
         {{- printf "<!-- SVG symbol map -->" | safeHTML }}
     {{ end -}}
 
+    {{/* Force content materialization before reading the icon registry, so icons used only
+         within the page's own content are registered even when the layout itself never
+         touched .Content. Cheap: .Content is computed at most once per page and cached. */}}
+    {{- $_ := .Content -}}
+
+    {{/* Read the union of the legacy Scratch key and the render-once Store key ("hinode-icons",
+         written by assets/icon.html when handed an explicit page argument); both registries
+         hold identical symbol entries during the transition and are uniq-ed below. */}}
+    {{- $icons := slice -}}
+    {{- with .Scratch.Get "icons" -}}{{- $icons = $icons | append . -}}{{- end -}}
+    {{- with .Store.Get "hinode-icons" -}}{{- $icons = $icons | append . -}}{{- end -}}
+
     {{/* Icons register in first-use order, which races across pages when the first use
          sits inside a cached partial; sort so identical icon sets emit identical bytes. */}}
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" display="none">
-        {{ delimit (sort (.Scratch.Get "icons" | uniq)) "\n" | safeHTML }}
+        {{ delimit (sort ($icons | uniq)) "\n" | safeHTML }}
     </svg>
 {{ end }}

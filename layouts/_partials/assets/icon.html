@@ -24,6 +24,15 @@
     {{ $error = $result.err }}
 {{ end }}
 
+{{- /*
+    Resolve the page context. An explicitly threaded "page" argument takes precedence over the
+    global page function, which resolves to the page that triggered the current rendering
+    context — not necessarily the page that owns the icon (e.g. when another page's render
+    materializes this page's .Content first). Callers should pass the owning page so symbol
+    registration in symbols mode lands on the correct page.
+*/ -}}
+{{- $page := or $args.page page -}}
+
 {{- $icon := string $args.icon -}}
 {{- $src := $args.src -}}
 
@@ -58,8 +67,11 @@
     {{- end -}}
 {{- end -}}
 
-{{/* Determine rendering mode from global config */}}
-{{- $mode := cond site.Params.env_bookshop_live "webfonts" site.Params.modules.fontawesome.mode -}}
+{{/*
+    Determine rendering mode from global config, with an optional per-call "mode" override. The
+    bookshop live editor always uses webfonts, as it cannot resolve static SVG resources.
+*/}}
+{{- $mode := cond site.Params.env_bookshop_live "webfonts" (or $args.mode site.Params.modules.fontawesome.mode) -}}
 {{- if not $mode -}}
     {{/* Fallback to legacy inline/embed if mode not set in config */}}
     {{- $inline := default true site.Params.modules.fontawesome.inline -}}
@@ -111,7 +123,7 @@
             {{- $output = $inject -}}
 
             {{/* Handle symbols mode - convert to symbol reference */}}
-            {{- if and (eq $mode "symbols") (page) -}}
+            {{- if and (eq $mode "symbols") $page -}}
                 {{- $symbolId := printf "%s-%s" $family $name -}}
                 {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
                 {{/* Add overflow="visible" attribute to containing SVG */}}
@@ -129,7 +141,8 @@
                 {{- $pathContent = replaceRE `</svg>\s*$` "" $pathContent -}}
                 {{/* Build clean symbol */}}
                 {{- $entry := printf `<symbol id="%s" overflow="visible" %s>%s</symbol>` $symbolId $viewBox $pathContent -}}
-                {{- page.Scratch.Add "icons" (slice $entry) -}}
+                {{- $page.Scratch.Add "icons" (slice $entry) -}}
+                {{- $page.Store.Add "hinode-icons" (slice $entry) -}}
             {{- end -}}
         {{- end -}}
     {{- else -}}
@@ -192,7 +205,7 @@
                     {{- $inject = replaceRE "width=\\\"(.*?)\\\"" "" $inject -}}
                     {{- $inject = replaceRE "height=\\\"(.*?)\\\"" "" $inject -}}
 
-                    {{- if page -}}
+                    {{- if $page -}}
                         {{/* Static icons: create symbol reference with viewBox and overflow */}}
                         {{/* Per FontAwesome docs: add overflow="visible" to prevent clipping */}}
                         {{- $symbolId := printf "%s-%s" $family $name -}}
@@ -213,7 +226,8 @@
                         {{- $pathContent = replaceRE `</svg>\s*$` "" $pathContent -}}
                         {{/* Build clean symbol */}}
                         {{- $entry := printf `<symbol id="%s" overflow="visible" %s>%s</symbol>` $symbolId $viewBox $pathContent -}}
-                        {{- page.Scratch.Add "icons" (slice $entry) -}}
+                        {{- $page.Scratch.Add "icons" (slice $entry) -}}
+                        {{- $page.Store.Add "hinode-icons" (slice $entry) -}}
                     {{- else -}}
                         {{/* Fallback to inline SVG if no page context */}}
                         {{- $output = $inject -}}
@@ -289,7 +303,7 @@
                     {{- $output = $inject -}}
 
                     {{/* Handle symbols mode - convert to symbol reference */}}
-                    {{- if and (eq $mode "symbols") (page) -}}
+                    {{- if and (eq $mode "symbols") $page -}}
                         {{- $symbolId := printf "%s-%s" $family $name -}}
                         {{- $definition := index (findRE "<svg[^>]*>" $output 1) 0 -}}
                         {{/* Add overflow="visible" attribute to containing SVG */}}
@@ -307,7 +321,8 @@
                         {{- $pathContent = replaceRE `</svg>\s*$` "" $pathContent -}}
                         {{/* Build clean symbol */}}
                         {{- $entry := printf `<symbol id="%s" overflow="visible" %s>%s</symbol>` $symbolId $viewBox $pathContent -}}
-                        {{- page.Scratch.Add "icons" (slice $entry) -}}
+                        {{- $page.Scratch.Add "icons" (slice $entry) -}}
+                        {{- $page.Store.Add "hinode-icons" (slice $entry) -}}
                     {{- end -}}
                 {{- end -}}
             {{- else -}}

@@ -7,6 +7,29 @@ comment: >-
   icons.
 
 arguments:
+  page:
+    optional: true
+    release: v6.1.0
+    comment: >-
+      Page that owns the icon. When set, symbol registration in `symbols` mode
+      lands on this page instead of the page that triggered the current
+      rendering context, which keeps icon sprites intact when the icon renders
+      in a foreign context (such as a cached partial or another page's
+      `.Content` render). Falls back to the global page context when omitted.
+  mode:
+    type: select
+    optional: true
+    group: partial
+    release: v6.1.0
+    comment: >-
+      Per-call override of the globally configured rendering mode. For example,
+      pass `svg` to force a single icon to render as an inline SVG, bypassing
+      sprite registration. Defaults to the mode set in the site configuration.
+    options:
+      values:
+        - symbols
+        - svg
+        - webfonts
   icon:
     position: 0
     comment: >-
