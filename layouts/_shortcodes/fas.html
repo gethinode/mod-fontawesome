@@ -68,6 +68,7 @@
 <!-- Main code -->
 {{- if not $error -}}
     {{- partial "assets/icon.html" (dict
+        "page"         .Page
         "icon"         $fullIcon
         "inline-style" (or $args.inlineStyle $args.style)
         "wrapper"      $args.wrapper

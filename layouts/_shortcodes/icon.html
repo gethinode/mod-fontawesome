@@ -96,6 +96,7 @@
 <!-- Main code -->
 {{- if not $error -}}
     {{- partial "assets/icon.html" (dict
+        "page"         .Page
         "icon"         $fullIcon
         "src"          $args.src
         "inline-style" (or $args.inlineStyle $args.style)
