@@ -115,7 +115,8 @@
             {{- $content := (replaceRE $regex "" $svg.Content) -}}
             {{/* Strip XML declaration if present */}}
             {{- $content = replaceRE `<\?xml[^>]*\?>` "" $content -}}
-            {{- $content = replaceRE `^\s+` "" $content -}}
+            {{/* Trim whitespace on both ends: a trailing newline renders as a space next to adjacent text */}}
+            {{- $content = replaceRE `^\s+|\s+$` "" $content -}}
             {{- $inject := (replaceRE "xmlns=\\\"(.*?)\\\"" (printf "class=\"svg-inline--fa %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $attr (or $style "")) $content) -}}
             {{/* Remove fixed width/height to allow CSS sizing (fa-2x, fa-3x, fa-4x, etc.) */}}
             {{- $inject = replaceRE "width=\\\"(.*?)\\\"" "" $inject -}}
@@ -199,7 +200,8 @@
                     {{- $content := (replaceRE $regex "" $svg.Content) -}}
                     {{/* Strip XML declaration if present */}}
                     {{- $content = replaceRE `<\?xml[^>]*\?>` "" $content -}}
-                    {{- $content = replaceRE `^\s+` "" $content -}}
+                    {{/* Trim whitespace on both ends: a trailing newline renders as a space next to adjacent text */}}
+                    {{- $content = replaceRE `^\s+|\s+$` "" $content -}}
                     {{- $inject := (replaceRE "xmlns=\\\"(.*?)\\\"" (printf "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $family $name $attr (or $style "")) $content) -}}
                     {{/* Remove fixed width/height to allow CSS sizing (fa-2x, fa-3x, etc.) */}}
                     {{- $inject = replaceRE "width=\\\"(.*?)\\\"" "" $inject -}}
@@ -253,7 +255,8 @@
                     {{- $content := (replaceRE $regex "" $svg.Content) -}}
                     {{/* Strip XML declaration if present */}}
                     {{- $content = replaceRE `<\?xml[^>]*\?>` "" $content -}}
-                    {{- $content = replaceRE `^\s+` "" $content -}}
+                    {{/* Trim whitespace on both ends: a trailing newline renders as a space next to adjacent text */}}
+                    {{- $content = replaceRE `^\s+|\s+$` "" $content -}}
                     {{- $inject := (replaceRE "xmlns=\\\"(.*?)\\\"" (printf "class=\"svg-inline--fa %s fa-%s %s\" fill=\"currentColor\" aria-hidden=\"true\" role=\"img\"%s" $family $name $attr (or $style "")) $content) -}}
                     {{/* Remove fixed width/height to allow CSS sizing (fa-2x, fa-3x, etc.) */}}
                     {{- $inject = replaceRE "width=\\\"(.*?)\\\"" "" $inject -}}
@@ -289,7 +292,8 @@
                     {{- $content := (replaceRE $regex "" $svg.Content) -}}
                     {{/* Strip XML declaration if present */}}
                     {{- $content = replaceRE `<\?xml[^>]*\?>` "" $content -}}
-                    {{- $content = replaceRE `^\s+` "" $content -}}
+                    {{/* Trim whitespace on both ends: a trailing newline renders as a space next to adjacent text */}}
+                    {{- $content = replaceRE `^\s+|\s+$` "" $content -}}
                     {{/* Clean up original SVG attributes to prevent duplicates */}}
                     {{- $content = replaceRE "xmlns=\\\"(.*?)\\\"" "" $content -}}
                     {{- $content = replaceRE "class=\\\"(.*?)\\\"" "" $content -}}
