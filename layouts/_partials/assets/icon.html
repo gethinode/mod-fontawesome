@@ -190,7 +190,7 @@
                     {{- if site.Params.modules.fontawesome.skipMissing -}}
                         {{- warnf $msg -}}
                         {{/* Fallback to webfont icon class */}}
-                        {{- $output = printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
+                        {{- $output = printf "<i class=\"%s fa-%s %s\" aria-hidden=\"true\"%s></i>" $family $name $attr (or $style "") -}}
                     {{- else -}}
                         {{- errorf $msg -}}
                     {{- end -}}
@@ -245,7 +245,7 @@
                     {{- if site.Params.modules.fontawesome.skipMissing -}}
                         {{- warnf $msg -}}
                         {{/* Fallback to webfont icon class */}}
-                        {{- $output = printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
+                        {{- $output = printf "<i class=\"%s fa-%s %s\" aria-hidden=\"true\"%s></i>" $family $name $attr (or $style "") -}}
                     {{- else -}}
                         {{- errorf $msg -}}
                     {{- end -}}
@@ -267,7 +267,7 @@
                 {{- end -}}
             {{- else -}}
                 {{/* Webfont mode - <i> tag rendered via CSS @font-face */}}
-                {{- $output = printf "<i class=\"%s fa-%s %s\"%s></i>" $family $name $attr (or $style "") -}}
+                {{- $output = printf "<i class=\"%s fa-%s %s\" aria-hidden=\"true\"%s></i>" $family $name $attr (or $style "") -}}
             {{- end -}}
         {{- else -}}
             {{/* Other icon families (Bootstrap Icons, Material Design Icons, etc.) */}}
@@ -282,7 +282,7 @@
                     {{- if site.Params.modules.fontawesome.skipMissing -}}
                         {{- warnf $msg -}}
                         {{/* Fallback to webfont icon class */}}
-                        {{- $output = printf "<i class=\"%s %s-%s %s\"%s></i>" $family $family $name $attr (or $style "") -}}
+                        {{- $output = printf "<i class=\"%s %s-%s %s\" aria-hidden=\"true\"%s></i>" $family $family $name $attr (or $style "") -}}
                     {{- else -}}
                         {{- errorf $msg -}}
                     {{- end -}}
@@ -331,7 +331,7 @@
                 {{- end -}}
             {{- else -}}
                 {{/* Webfont mode - output simple <i> tag for CSS to handle */}}
-                {{- $output = printf "<i class=\"%s %s-%s %s\"%s></i>" $family $family $name $attr (or $style "") -}}
+                {{- $output = printf "<i class=\"%s %s-%s %s\" aria-hidden=\"true\"%s></i>" $family $family $name $attr (or $style "") -}}
             {{- end -}}
         {{- end -}}
     {{- end -}}
