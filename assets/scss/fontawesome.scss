@@ -40,7 +40,16 @@
 svg.svg-inline--fa {
   overflow: visible;
   height: 1em;
-  width: auto;
+  // Honour the width custom property. FontAwesome v7 no longer sets a width on
+  // the width utilities themselves: `.fa-fw` sets `--fa-width: 1.25em`, and the
+  // webfont rule reads it as `width: var(--fa-width, 1.25em)`. Reading it here
+  // too is what makes `fa-fw`, `fa-width-fixed` and `fa-width-auto` mean
+  // anything on an inline SVG — without it the class is accepted and ignored.
+  //
+  // `auto` stays the fallback, so an icon that sets no property renders exactly
+  // as before. Only the three utilities set it, and each sets it on the icon
+  // itself rather than an ancestor, so nothing inherits a width by accident.
+  width: var(--fa-width, auto);
   // Default vertical alignment for SVG icons
   vertical-align: -0.125em;
 }
