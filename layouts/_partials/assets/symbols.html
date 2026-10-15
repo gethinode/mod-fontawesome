@@ -40,6 +40,11 @@
     {{- end -}}
 {{- end -}}
 
+{{/* Webfont files are assets; publish them only when icons render as webfonts. */}}
+{{- if eq $globalMode "webfonts" -}}
+    {{- partialCached "assets/webfonts.html" . -}}
+{{- end -}}
+
 {{- if eq $globalMode "symbols" -}}
     {{- if and site.Params.modules.fontawesome.debug -}}
         {{- printf "<!-- SVG symbol map -->" | safeHTML }}

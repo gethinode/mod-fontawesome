@@ -15,10 +15,13 @@
       source = "scss"
       target = "assets/scss/modules/fontawesome"
 
-    # Mount FontAwesome webfonts
+    # Mount FontAwesome webfonts as assets, not static files. Hugo copies static mounts
+    # into the publish directory unconditionally; assets are written only when a template
+    # publishes them. layouts/_partials/assets/webfonts.html does so in webfonts mode,
+    # at the same /webfonts/ URLs.
     [[module.imports.mounts]]
       source = "webfonts"
-      target = "static/webfonts"
+      target = "assets/webfonts"
 
     # Mount FontAwesome SVG icons (use regular svgs for 512x512 viewBox)
     [[module.imports.mounts]]

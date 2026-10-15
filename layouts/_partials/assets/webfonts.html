@@ -1,0 +1,13 @@
+{{/*
+  Publishes the webfont files mounted under assets/webfonts. They are assets rather than
+  static files so that sites not rendering icons as webfonts do not ship them (Hugo copies
+  every static file, but only writes an asset that a template publishes). Files keep their
+  /webfonts/... path, so the @font-face URLs in the stylesheets are unchanged.
+
+  Called from assets/symbols.html when the global mode resolves to "webfonts". The match is
+  recursive so other icon modules (e.g. mod-flaticon) can mount their fonts under
+  assets/webfonts/<name>/ and be published by the same switch.
+*/}}
+{{- range resources.Match "webfonts/**" -}}
+    {{- $_ := .Publish -}}
+{{- end -}}
